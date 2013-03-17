@@ -15,11 +15,11 @@
  */
 package com.github.yihtserns.camelscript.transform;
 
+import com.github.yihtserns.camelscript.transform.testutil.LocalResources;
 import groovy.lang.GString;
 import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.junit.Test;
 import static org.hamcrest.Matchers.*;
@@ -30,9 +30,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class CamelScriptASTTransformationTest {
 
+    private LocalResources resources = LocalResources.forClass(getClass());
+
     @Test
     public void shouldBeAbleToTreatCamelScriptClassAsCamelContext() throws Exception {
-        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("CamelScriptAsCamelContext")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptAsCamelContext.groovy")), is((Object) "Result"));
     }
 
     /**
@@ -40,17 +42,17 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldMakeCamelScriptInstanceOfCamelContext() throws Exception {
-        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("CamelScriptIsCamelContext")), is((Object) true));
+        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptIsCamelContext.groovy")), is((Object) true));
     }
 
     @Test
     public void shouldBeAbleToBuildRoutesUsingSyntacticSugar() throws Exception {
-        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("BuildRoutesSyntacticSugar")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("BuildRoutesSyntacticSugar.groovy")), is((Object) "Result"));
     }
 
     @Test
     public void shouldBeAbleToAddClosureAsProcessor() throws Exception {
-        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("ClosureAsProcessor")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("ClosureAsProcessor.groovy")), is((Object) "Result"));
     }
 
     /**
@@ -58,7 +60,7 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldBeAbleToReferToComponentInScriptBinding() throws Exception {
-        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("ComponentInScriptBinding")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("ComponentInScriptBinding.groovy")), is((Object) "Result"));
     }
 
     /**
@@ -66,16 +68,11 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldBeAbleToReferToInstanceInScriptBinding() throws Exception {
-        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("InstanceInScriptBinding")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("InstanceInScriptBinding.groovy")), is((Object) "Result"));
     }
 
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
         Object result = new GroovyShell().evaluate(groovyFile);
         return (result instanceof GString) ? result.toString() : result;
-    }
-
-    private File getCamelScriptFileWithSuffix(String suffix) throws URISyntaxException {
-        final String filename = "CamelScriptASTTransformationTest_" + suffix + ".groovy";
-        return new File(getClass().getResource(filename).toURI());
     }
 }
