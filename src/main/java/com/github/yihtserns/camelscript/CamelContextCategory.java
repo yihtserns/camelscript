@@ -48,14 +48,18 @@ public class CamelContextCategory {
      * </pre>
      * <strong>Note</strong>: {@link RouteDefinitionCategory} is auto-included to buildRoute
      * @param self to add routes to
-     * @param buildRoute things you'd do in {@link RouteBuilder#configure()}
+     * @param buildRoutePrototype things you'd do in {@link RouteBuilder#configure()}
      * @throws Exception if an error occurs while building route
      * @see CamelContext#addRoutes(RoutesBuilder)
      */
-    public static void routes(final CamelContext self, final Closure buildRoute) throws Exception {
+    public static void routes(final CamelContext self, final Closure buildRoutePrototype) throws Exception {
         self.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // Should not need to clone as it's unlikely that this closure will be invoked in multiple threads
+                // (or even multiple times), but I want to keep this as a reference/reminder
+                Closure buildRoute = (Closure) buildRoutePrototype.clone();
+
                 buildRoute.setDelegate(this);
                 GroovyCategorySupport.use(RouteDefinitionCategory.class, buildRoute);
             }
