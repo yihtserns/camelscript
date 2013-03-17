@@ -56,7 +56,7 @@ routes {
 start()
 ```
 
-[Referring to beans in URI query string] [bean-querystring]
+[Referring to Objects from URI query string] [bean-querystring]
 -------------------------
 ```groovy
 // Adapted from http://camel.apache.org/file2.html#File2-Filterusingorg.apache.camel.component.file.GenericFileFilter
@@ -67,7 +67,7 @@ package test
 import org.apache.camel.component.file.GenericFileFilter
 import org.apache.camel.component.file.GenericFile
 
-// Add variable to binding
+// Add object to binding
 myFilter = { GenericFile file -> !file.fileName.startsWith('skip') } as GenericFileFilter
 
 routes {
@@ -78,7 +78,7 @@ start()
 Thread.currentThread().join() // Wait forever
 ```
 
-[Referring to beans in URI scheme] [bean-urischeme]
+[Referring to Objects from URI scheme] [bean-urischeme]
 ------------------------------------------------------
 ```groovy
 // Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
@@ -92,7 +92,7 @@ package test
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.camel.component.jms.JmsComponent
 
-// Add variable to binding
+// Add object to binding
 activemq = new JmsComponent(connectionFactory: new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444'))
 
 routes {
