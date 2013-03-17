@@ -53,6 +53,22 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("ClosureAsProcessor")), is((Object) "Result"));
     }
 
+    /**
+     * @see http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML
+     */
+    @Test
+    public void shouldBeAbleToReferToComponentInScriptBinding() throws Exception {
+        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("ComponentInScriptBinding")), is((Object) "Result"));
+    }
+
+    /**
+     * @see http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs
+     */
+    @Test
+    public void shouldBeAbleToReferToInstanceInScriptBinding() throws Exception {
+        assertThat(evaluateAndReturnResult(getCamelScriptFileWithSuffix("InstanceInScriptBinding")), is((Object) "Result"));
+    }
+
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
         Object result = new GroovyShell().evaluate(groovyFile);
         return (result instanceof GString) ? result.toString() : result;

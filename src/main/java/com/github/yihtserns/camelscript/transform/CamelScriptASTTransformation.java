@@ -25,7 +25,6 @@ import org.codehaus.groovy.ast.AnnotationNode;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.FieldNode;
 import org.codehaus.groovy.ast.MixinASTTransformation;
-import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ClassExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
@@ -36,6 +35,7 @@ import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.DelegateASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 import org.objectweb.asm.Opcodes;
+import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION;
 
 /**
  * Transformer to turn a Groovy Script into a Camel Script.
@@ -46,7 +46,6 @@ import org.objectweb.asm.Opcodes;
 public class CamelScriptASTTransformation implements ASTTransformation {
 
     private static final String CAMEL_CONTEXT_FIELD_NAME = "camelContext";
-    private static final Expression NO_ARGS = new ArgumentListExpression();
     private DelegateASTTransformation delegateTransformation = new DelegateASTTransformation();
     private MixinASTTransformation mixinTransformation = new MixinASTTransformation();
 
@@ -59,12 +58,15 @@ public class CamelScriptASTTransformation implements ASTTransformation {
             return;
         }
 
-        transformer.delegateTo(
-                fieldNode(
-                CAMEL_CONTEXT_FIELD_NAME,
-                CamelContext.class,
-                new ConstructorCallExpression(new ClassNode(DefaultCamelContext.class), NO_ARGS)));
+        Expression newScriptRegistry = constructorOf(ScriptBindingRegistry.class, THIS_EXPRESSION);
+        Expression newCamelContext = constructorOf(DefaultCamelContext.class, newScriptRegistry);
+
+        transformer.delegateTo(fieldNode(CAMEL_CONTEXT_FIELD_NAME, CamelContext.class, newCamelContext));
         transformer.mixin(CamelContextCategory.class);
+    }
+
+    private Expression constructorOf(final Class clazz, final Expression constructorArg) {
+        return new ConstructorCallExpression(new ClassNode(clazz), constructorArg);
     }
 
     /**
