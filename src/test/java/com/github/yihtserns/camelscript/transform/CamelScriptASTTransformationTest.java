@@ -71,6 +71,14 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("InstanceInScriptBinding.groovy")), is((Object) "Result"));
     }
 
+    /**
+     * Like referring to a prototype Spring bean.
+     */
+    @Test
+    public void shouldBeAbleToUseClosureInScriptBindingAsFactoryMethod() throws Exception {
+        assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.groovy")), is((Object) "Result"));
+    }
+
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
         Object result = new GroovyShell().evaluate(groovyFile);
         return (result instanceof GString) ? result.toString() : result;
