@@ -1,32 +1,23 @@
 Camel Script
 ============
+Provides syntactic sugar for Apache Camel to make it easy to configure in Groovy script.
 
 **Note**: Not yet available from central maven repository
 
-Introduction
-------------
-This project enables you to simplify this type of Groovy Script:
+Overview
+--------
+This project enables you to simplify this type of Groovy script:
 ```groovy
 @Grab('org.apache.camel:camel-jetty:2.4.0')
 @Grab('org.slf4j:slf4j-simple:1.6.6')
 import org.apache.camel.Processor
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.builder.RouteBuilder
-import javax.servlet.http.HttpServletRequest
 
 def context = new DefaultCamelContext()
 context.addRoutes(new RouteBuilder() {
     void configure() {
-        from('jetty:http://localhost:8090/hello/world').process({ it.out.body = "Hello World!" } as Processor)
-
-        from('jetty:http://localhost:8090/byeworld.txt').process({ it.out.body = "Buh bye" } as Processor)
-
-        from('jetty:http://localhost:8091/').process ({
-          def httpRequest = it.in.getBody(HttpServletRequest)
-          String name = httpRequest.getParameter('name')
-
-          it.out.body = "Yay $name!"
-        } as Processor)
+        from('jetty:http://localhost:8090/hello/world').transform(constant('Hello World!'))
     }
 })
 context.start()
@@ -38,26 +29,31 @@ into this instead:
 package test
 
 @Grab('com.github.yihtserns:camelscript:1.0.0')
-import javax.servlet.http.HttpServletRequest
+import groovy.*
 
 routes {
-    // Don't have to coerce closure to Processor anymore
-    from('jetty:http://localhost:8090/hello/world').process { it.out.body = "Hello World!" }
-
-    from('jetty:http://localhost:8090/byeworld.txt').process { it.out.body = "Buh bye" }
-
-    from('jetty:http://localhost:8091/').process {
-      def httpRequest = it.in.getBody(HttpServletRequest)
-      String name = httpRequest.getParameter('name')
-
-      it.out.body = "Yay $name!"
-    }
+    from('jetty:http://localhost:8090/hello/world').transform(constant('Hello World!'))
 }
 start()
 ```
 
-[Referring to Objects from URI query string] [bean-querystring]
--------------------------
+Route building
+--------------
+### Process
+Instead of this:
+```groovy
+from('jetty:http://localhost:8090/hello/world').process({exchange -> exchange.out.body = 'Hello World!'} as Processor)
+```
+Can do this:
+```groovy
+// Don't have to coerce closure to Processor anymore
+from('jetty:http://localhost:8090/hello/world').process {exchange -> exchange.out.body = 'Hello World!'}
+```
+
+### [Registry](http://camel.apache.org/registry.html)
+Registry used in Camel Script is backed by the [Groovy script's binding](http://groovy.codehaus.org/api/groovy/lang/Binding.html), so anything placed in the latter can be referenced.
+
+#### [Referring to Objects from URI query string](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs)
 ```groovy
 // Adapted from http://camel.apache.org/file2.html#File2-Filterusingorg.apache.camel.component.file.GenericFileFilter
 @CamelScript
@@ -78,8 +74,7 @@ start()
 Thread.currentThread().join() // Wait forever
 ```
 
-[Referring to Objects from URI scheme] [bean-urischeme]
-------------------------------------------------------
+#### [Referring to Objects from URI scheme](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML)
 ```groovy
 // Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
 @CamelScript
@@ -102,8 +97,5 @@ routes {
 start()
 ```
 
-References
-----------
-[bean-querystring]: http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs
-[bean-urischeme]: http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML
-[Simplest way I know to create a simple HTTP server using Groovy](http://zefifier.wordpress.com/2012/07/06/quickest-way-i-know-to-create-a-simple-http-server-using-groovy/)
+#### Closure
+// TODO:
