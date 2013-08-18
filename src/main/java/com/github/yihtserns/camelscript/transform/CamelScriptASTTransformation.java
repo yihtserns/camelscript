@@ -29,6 +29,9 @@ import org.codehaus.groovy.ast.expr.ClassExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
 import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.FieldExpression;
+import org.codehaus.groovy.ast.expr.StaticMethodCallExpression;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
@@ -56,6 +59,10 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      * public class SCRIPT_NAME {
      *      {@literal @}Delegate
      *      CamelContext camelContext = new DefaultCamelContext(new {@link ScriptBindingRegistry}(this));
+     *
+     *      {
+     *          {@link CamelContextStopper#registerToShutdownHook(CamelContext) CamelContextStopper.registerToShutdownHook}(camelContext);
+     *      }
      * }
      * </pre>
      */
@@ -70,9 +77,13 @@ public class CamelScriptASTTransformation implements ASTTransformation {
 
         Expression newScriptRegistry = constructorOf(ScriptBindingRegistry.class, THIS_EXPRESSION);
         Expression newCamelContext = constructorOf(DefaultCamelContext.class, newScriptRegistry);
+        FieldNode camelContextField = fieldNode(CAMEL_CONTEXT_FIELD_NAME, CamelContext.class, newCamelContext);
+        Expression registerToShutdownHook = staticMethodOf(
+                CamelContextStopper.class, "registerToShutdownHook", new FieldExpression(camelContextField));
 
-        transformer.delegateTo(fieldNode(CAMEL_CONTEXT_FIELD_NAME, CamelContext.class, newCamelContext));
+        transformer.delegateTo(camelContextField);
         transformer.mixin(CamelContextCategory.class);
+        transformer.addToInitializerBlock(registerToShutdownHook);
     }
 
     private Expression constructorOf(final Class clazz, final Expression constructorArg) {
@@ -88,6 +99,13 @@ public class CamelScriptASTTransformation implements ASTTransformation {
     private FieldNode fieldNode(
             final String fieldName, final Class<CamelContext> type, final Expression initialValueExpression) {
         return new FieldNode(fieldName, Opcodes.ACC_PRIVATE, new ClassNode(type), null, initialValueExpression);
+    }
+
+    /**
+     * Convenience method to create {@link StaticMethodCallExpression}.
+     */
+    private Expression staticMethodOf(final Class clazz, final String methodName, final Expression arguments) {
+        return new StaticMethodCallExpression(new ClassNode(clazz), methodName, arguments);
     }
 
     private class ScriptClassNodeTransformer {
@@ -124,6 +142,10 @@ public class CamelScriptASTTransformation implements ASTTransformation {
             mixinTransformation.visit(
                     new ASTNode[]{categoryAnnotationNode, scriptClassNode},
                     source);
+        }
+
+        public void addToInitializerBlock(final Expression expression) {
+            scriptClassNode.addObjectInitializerStatements(new ExpressionStatement(expression));
         }
     }
 }
