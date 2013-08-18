@@ -29,8 +29,8 @@
             <version>2.4.0</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>commons-logging-api</artifactId>
                     <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
