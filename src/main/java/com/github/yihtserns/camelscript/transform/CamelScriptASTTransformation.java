@@ -58,7 +58,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      * {@literal @}Mixin(CamelContextCategory)
      * public class SCRIPT_NAME {
      *      {@literal @}Delegate
-     *      CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
+     *      private CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
      *
      *      {
      *          CamelContextStopper.registerToShutdownHook(camelContext);
