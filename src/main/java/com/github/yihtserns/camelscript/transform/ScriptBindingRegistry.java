@@ -30,7 +30,7 @@ import org.apache.camel.spi.Registry;
  * @author yihtserns
  * @see #lookup(String)
  */
-public class ScriptBindingRegistry implements Registry {
+class ScriptBindingRegistry implements Registry {
 
     /**
      * @see #ScriptBindingRegistry(Script)
