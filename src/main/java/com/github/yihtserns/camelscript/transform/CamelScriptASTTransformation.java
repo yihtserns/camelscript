@@ -49,6 +49,16 @@ public class CamelScriptASTTransformation implements ASTTransformation {
     private DelegateASTTransformation delegateTransformation = new DelegateASTTransformation();
     private MixinASTTransformation mixinTransformation = new MixinASTTransformation();
 
+    /**
+     * Source code representation of what this method is doing:
+     * <pre>
+     * {@literal @}Mixin({@link CamelContextCategory})
+     * public class SCRIPT_NAME {
+     *      {@literal @}Delegate
+     *      CamelContext camelContext = new DefaultCamelContext(new {@link ScriptBindingRegistry}(this));
+     * }
+     * </pre>
+     */
     public void visit(final ASTNode[] nodes, final SourceUnit source) {
         final ClassNode scriptClassNode = source.getAST().getScriptClassDummy();
         ScriptClassNodeTransformer transformer = new ScriptClassNodeTransformer(scriptClassNode, source);
