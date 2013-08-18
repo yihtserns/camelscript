@@ -55,13 +55,13 @@ public class CamelScriptASTTransformation implements ASTTransformation {
     /**
      * Source code representation of what this method is doing:
      * <pre>
-     * {@literal @}Mixin({@link CamelContextCategory})
+     * {@literal @}Mixin(CamelContextCategory)
      * public class SCRIPT_NAME {
      *      {@literal @}Delegate
-     *      CamelContext camelContext = new DefaultCamelContext(new {@link ScriptBindingRegistry}(this));
+     *      CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
      *
      *      {
-     *          {@link CamelContextStopper#registerToShutdownHook(CamelContext) CamelContextStopper.registerToShutdownHook}(camelContext);
+     *          CamelContextStopper.registerToShutdownHook(camelContext);
      *      }
      * }
      * </pre>
