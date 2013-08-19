@@ -97,7 +97,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      * @return
      */
     private FieldNode fieldNode(
-            final String fieldName, final Class<CamelContext> type, final Expression initialValueExpression) {
+            final String fieldName, final Class<?> type, final Expression initialValueExpression) {
         return new FieldNode(fieldName, Opcodes.ACC_PRIVATE, new ClassNode(type), null, initialValueExpression);
     }
 
