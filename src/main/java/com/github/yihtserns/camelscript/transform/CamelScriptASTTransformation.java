@@ -57,7 +57,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      * <pre>
      * {@literal @}Mixin(CamelContextCategory)
      * public class SCRIPT_NAME {
-     *      {@literal @}Delegate
+     *      {@literal @}Delegate(deprecated=true)
      *      private CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
      *
      *      {
@@ -124,6 +124,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
          */
         public void delegateTo(final FieldNode fieldNode) {
             AnnotationNode delegateAnnotationNode = new AnnotationNode(new ClassNode(Delegate.class));
+            // Have to implement all methods in an interface, even deprecated ones
             delegateAnnotationNode.setMember("deprecated", new ConstantExpression(true));
 
             scriptClassNode.addField(fieldNode);
