@@ -68,12 +68,13 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      */
     public void visit(final ASTNode[] nodes, final SourceUnit source) {
         final ClassNode scriptClassNode = source.getAST().getScriptClassDummy();
-        ScriptClassNodeTransformer transformer = new ScriptClassNodeTransformer(scriptClassNode, source);
 
         if (scriptClassNode.getField(CAMEL_CONTEXT_FIELD_NAME) != null) {
             // Encountered inner class
             return;
         }
+
+        ScriptClassNodeTransformer transformer = new ScriptClassNodeTransformer(scriptClassNode, source);
 
         Expression newScriptRegistry = constructorOf(ScriptBindingRegistry.class, THIS_EXPRESSION);
         Expression newCamelContext = constructorOf(DefaultCamelContext.class, newScriptRegistry);
