@@ -34,6 +34,7 @@ import org.codehaus.groovy.ast.expr.StaticMethodCallExpression;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.control.SourceUnit;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.DelegateASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
@@ -54,6 +55,8 @@ public class CamelScriptASTTransformation implements ASTTransformation {
 
     /**
      * Source code representation of what this method is doing:
+     * import static com.github.yihtserns.camelscript.transform.PrintlnToLogger.*;
+     *
      * <pre>
      * {@literal @}Mixin(CamelContextCategory)
      * public class SCRIPT_NAME {
@@ -74,6 +77,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
             return;
         }
 
+        source.getConfiguration().addCompilationCustomizers(new ImportCustomizer().addStaticStars(PrintlnToLogger.class.getName()));
         ScriptClassNodeTransformer transformer = new ScriptClassNodeTransformer(scriptClassNode, source);
 
         Expression newScriptRegistry = constructorOf(ScriptBindingRegistry.class, THIS_EXPRESSION);
