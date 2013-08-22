@@ -18,10 +18,12 @@ package com.github.yihtserns.camelscript.transform;
 import com.github.yihtserns.camelscript.CamelContextCategory;
 import groovy.lang.Delegate;
 import groovy.lang.Mixin;
+import groovy.util.logging.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.AnnotationNode;
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.FieldNode;
 import org.codehaus.groovy.ast.MixinASTTransformation;
@@ -38,6 +40,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.DelegateASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
+import org.codehaus.groovy.transform.LogASTTransformation;
 import org.objectweb.asm.Opcodes;
 import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION;
 
@@ -52,6 +55,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
     private static final String CAMEL_CONTEXT_FIELD_NAME = "camelContext";
     private DelegateASTTransformation delegateTransformation = new DelegateASTTransformation();
     private MixinASTTransformation mixinTransformation = new MixinASTTransformation();
+    private LogASTTransformation logTransformation = new LogASTTransformation();
 
     /**
      * Source code representation of what this method is doing:
@@ -59,6 +63,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      *
      * <pre>
      * {@literal @}Mixin(CamelContextCategory)
+     * {@literal @}groovy.util.logging.Slf4j
      * public class SCRIPT_NAME {
      *      {@literal @}Delegate
      *      private CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
@@ -86,6 +91,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
         Expression registerToShutdownHook = staticMethodOf(
                 CamelContextStopper.class, "registerToShutdownHook", new FieldExpression(camelContextField));
 
+        transformer.addLogger();
         transformer.delegateTo(camelContextField);
         transformer.mixin(CamelContextCategory.class);
         transformer.addToInitializerBlock(registerToShutdownHook);
@@ -121,6 +127,14 @@ public class CamelScriptASTTransformation implements ASTTransformation {
         public ScriptClassNodeTransformer(final ClassNode scriptClassNode, final SourceUnit source) {
             this.scriptClassNode = scriptClassNode;
             this.source = source;
+        }
+
+        public void addLogger() {
+            AnnotationNode slf4jAnnotationNode = new AnnotationNode(ClassHelper.make(Slf4j.class));
+
+            logTransformation.visit(
+                    new ASTNode[]{slf4jAnnotationNode, scriptClassNode},
+                    source);
         }
 
         /**

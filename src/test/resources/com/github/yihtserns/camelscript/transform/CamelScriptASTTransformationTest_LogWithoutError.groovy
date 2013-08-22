@@ -1,0 +1,4 @@
+@CamelScript
+package com.github.yihtserns.camelscript.transform
+
+log.info "Logging in ${getClass()}"

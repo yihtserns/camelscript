@@ -79,6 +79,14 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.groovy")), is((Object) "Result"));
     }
 
+    /**
+     * Provides user with an OOTB SLF4J Logger.
+     */
+    @Test
+    public void shouldBeAbleToLogWithoutError() throws Exception {
+        evaluateAndReturnResult(resources.getFile("LogWithoutError.groovy"));
+    }
+
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
         Object result = new GroovyShell().evaluate(groovyFile);
         return (result instanceof GString) ? result.toString() : result;
