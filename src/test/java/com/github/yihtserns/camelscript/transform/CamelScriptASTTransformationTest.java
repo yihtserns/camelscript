@@ -71,11 +71,6 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("InstanceInScriptBinding.groovy")), is((Object) "Result"));
     }
 
-    @Test
-    public void shouldBeAbleBuildSmootherRoutesUsingSyntacticSugar() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("SmootherRoutesSyntacticSugar.groovy")), is((Object) "Result"));
-    }
-
     /**
      * Like referring to a prototype Spring bean.
      */
