@@ -71,17 +71,28 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("InstanceInScriptBinding.groovy")), is((Object) "Result"));
     }
 
-    @Test
-    public void shouldBeAbleBuildSmootherRoutesUsingSyntacticSugar() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("SmootherRoutesSyntacticSugar.groovy")), is((Object) "Result"));
-    }
-
     /**
      * Like referring to a prototype Spring bean.
      */
     @Test
     public void shouldBeAbleToUseClosureInScriptBindingAsFactoryMethod() throws Exception {
         assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.groovy")), is((Object) "Result"));
+    }
+
+    /**
+     * Provides user with an OOTB SLF4J Logger.
+     */
+    @Test
+    public void shouldBeAbleToLogWithoutError() throws Exception {
+        evaluateAndReturnResult(resources.getFile("LogWithoutError.groovy"));
+    }
+
+    /**
+     * Redirect print statements to logger.
+     */
+    @Test
+    public void shouldBeAbleToPrintWithoutError() throws Exception {
+        evaluateAndReturnResult(resources.getFile("PrintWithoutError.groovy"));
     }
 
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
