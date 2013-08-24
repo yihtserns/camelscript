@@ -87,6 +87,14 @@ public class CamelScriptASTTransformationTest {
         evaluateAndReturnResult(resources.getFile("LogWithoutError.groovy"));
     }
 
+    /**
+     * Redirect print statements to logger.
+     */
+    @Test
+    public void shouldBeAbleToPrintWithoutError() throws Exception {
+        evaluateAndReturnResult(resources.getFile("PrintWithoutError.groovy"));
+    }
+
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
         Object result = new GroovyShell().evaluate(groovyFile);
         return (result instanceof GString) ? result.toString() : result;

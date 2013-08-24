@@ -18,33 +18,37 @@ package com.github.yihtserns.camelscript.transform;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Using this and static import to redirect println to log.
- * <p/>
- * <strong>Note</strong>: This is temporary solution, until I find out how to use the script's class name as
- * category.
+ * Help translate print, println & printf to logger.
  *
  * @author yihtserns
  */
 public class PrintlnToLogger {
 
-    private static Logger log = LoggerFactory.getLogger(PrintlnToLogger.class);
+    private Logger log;
 
-    public static void println(final Object obj) {
+    public PrintlnToLogger(final Logger log) {
+        this.log = log;
+    }
+
+    public void println(final Object obj) {
         log.info(InvokerHelper.toString(obj));
     }
 
-    public static void print(final Object obj) {
+    public void print(final Object obj) {
         println(obj);
     }
 
-    public static void println() {
+    public void println() {
         println("");
     }
 
-    public static void printf(final String format, final Object values) {
+    public void printf(final String format, final Object values) {
         println(DefaultGroovyMethods.sprintf(null, format, values));
+    }
+
+    public void printf(final String format, final Object[] values) {
+        printf(format, (Object) values);
     }
 }
