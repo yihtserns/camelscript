@@ -74,7 +74,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      * {@literal @}Mixin(CamelContextCategory)
      * {@literal @}groovy.util.logging.Slf4j('log')
      * public class SCRIPT_NAME {
-     *      {@literal @}Delegate
+     *      {@literal @}Delegate(deprecated=true)
      *      private CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
      *
      *      {
@@ -112,7 +112,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
     }
 
     private Expression constructorOf(final Class clazz, final Expression... constructorArgs) {
-        return new ConstructorCallExpression(new ClassNode(clazz), new ArgumentListExpression(constructorArgs));
+        return new ConstructorCallExpression(ClassHelper.make(clazz), new ArgumentListExpression(constructorArgs));
     }
 
     /**
@@ -123,14 +123,14 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      */
     private FieldNode fieldNode(
             final String fieldName, final Class<?> type, final Expression initialValueExpression) {
-        return new FieldNode(fieldName, Opcodes.ACC_PRIVATE, new ClassNode(type), null, initialValueExpression);
+        return new FieldNode(fieldName, Opcodes.ACC_PRIVATE, ClassHelper.make(type), null, initialValueExpression);
     }
 
     /**
      * Convenience method to create {@link StaticMethodCallExpression}.
      */
     private Expression staticMethodOf(final Class clazz, final String methodName, final Expression arguments) {
-        return new StaticMethodCallExpression(new ClassNode(clazz), methodName, arguments);
+        return new StaticMethodCallExpression(ClassHelper.make(clazz), methodName, arguments);
     }
 
     private class ScriptClassNodeTransformer {
@@ -180,6 +180,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
          */
         public void delegateTo(final FieldNode fieldNode) {
             AnnotationNode delegateAnnotationNode = new AnnotationNode(new ClassNode(Delegate.class));
+            // Have to implement all methods in an interface, even deprecated ones
             delegateAnnotationNode.setMember("deprecated", new ConstantExpression(true));
 
             scriptClassNode.addField(fieldNode);
@@ -193,7 +194,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
          */
         public void mixin(final Class categoryClass) {
             AnnotationNode categoryAnnotationNode = new AnnotationNode(new ClassNode(Mixin.class));
-            categoryAnnotationNode.setMember("value", new ClassExpression(new ClassNode(categoryClass)));
+            categoryAnnotationNode.setMember("value", new ClassExpression(ClassHelper.make(categoryClass)));
 
             mixinTransformation.visit(
                     new ASTNode[]{categoryAnnotationNode, scriptClassNode},
