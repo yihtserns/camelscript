@@ -179,7 +179,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
          * @see {@link Delegate}
          */
         public void delegateTo(final FieldNode fieldNode) {
-            AnnotationNode delegateAnnotationNode = new AnnotationNode(new ClassNode(Delegate.class));
+            AnnotationNode delegateAnnotationNode = new AnnotationNode(ClassHelper.make(Delegate.class));
             // Have to implement all methods in an interface, even deprecated ones
             delegateAnnotationNode.setMember("deprecated", new ConstantExpression(true));
 
@@ -193,7 +193,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
          * @param categoryClass Groovy Category to be mixed into the Groovy Script
          */
         public void mixin(final Class categoryClass) {
-            AnnotationNode categoryAnnotationNode = new AnnotationNode(new ClassNode(Mixin.class));
+            AnnotationNode categoryAnnotationNode = new AnnotationNode(ClassHelper.make(Mixin.class));
             categoryAnnotationNode.setMember("value", new ClassExpression(ClassHelper.make(categoryClass)));
 
             mixinTransformation.visit(
