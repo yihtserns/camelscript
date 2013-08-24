@@ -24,31 +24,46 @@ import org.slf4j.Logger;
  *
  * @author yihtserns
  */
-public class PrintlnToLogger {
+public class PrintToLogger {
 
     private Logger log;
 
-    public PrintlnToLogger(final Logger log) {
+    public PrintToLogger(final Logger log) {
         this.log = log;
     }
 
-    public void println(final Object obj) {
-        log.info(InvokerHelper.toString(obj));
-    }
-
+    /**
+     * @see groovy.lang.Script#print(Object)
+     */
     public void print(final Object obj) {
         println(obj);
     }
 
-    public void println() {
-        println("");
+    /**
+     * @see groovy.lang.Script#printf(String, Object[])
+     */
+    public void printf(final String format, final Object[] values) {
+        printf(format, (Object) values);
     }
 
+    /**
+     * @see groovy.lang.Script#printf(String, Object)
+     */
     public void printf(final String format, final Object values) {
         println(DefaultGroovyMethods.sprintf(null, format, values));
     }
 
-    public void printf(final String format, final Object[] values) {
-        printf(format, (Object) values);
+    /**
+     * @see groovy.lang.Script#println()
+     */
+    public void println() {
+        println("");
+    }
+
+    /**
+     * @see groovy.lang.Script#println(Object)
+     */
+    public void println(final Object obj) {
+        log.info(InvokerHelper.toString(obj));
     }
 }

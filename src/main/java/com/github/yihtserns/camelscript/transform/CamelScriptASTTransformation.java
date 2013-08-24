@@ -157,7 +157,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
             addToInitializerBlock(new DeclarationExpression(
                     printToLoggerVar,
                     EQUAL_TOKEN,
-                    constructorOf(PrintlnToLogger.class, new VariableExpression(LOG_FIELD_NAME))));
+                    constructorOf(PrintToLogger.class, new VariableExpression(LOG_FIELD_NAME))));
 
             copyMethodsToMetaClass(printToLoggerVar, "print");
             copyMethodsToMetaClass(printToLoggerVar, "printf");
