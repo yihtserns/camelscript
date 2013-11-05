@@ -48,4 +48,28 @@ class RouteBuilderCategoryTest {
         def result = createProducerTemplate().requestBody('direct:input', (Object) null)
         assert result == 'Result'
     }
+
+    /**
+     * Don't know enough to make the comma unnecessary, but I have plans to make the 'from' optional anyway
+     * so don't want to spend too much time on this.
+     */
+    @Test
+    void "from without parenthesis"() {
+        addRoutes(
+            new RouteBuilder() {
+                void configure() {
+                    use (RouteBuilderCategory) {
+                        from 'direct:input', { // GOTCHA: Note the comma
+                            process {it.out.body = 'Res'}
+                            process {it.out.body = "${it.in.body}ult"}
+                        }
+                    }
+                }
+            }
+        )
+        start()
+
+        def result = createProducerTemplate().requestBody('direct:input', (Object) null)
+        assert result == 'Result'
+    }
 }
