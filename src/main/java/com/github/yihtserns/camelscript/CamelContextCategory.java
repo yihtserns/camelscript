@@ -17,6 +17,7 @@ package com.github.yihtserns.camelscript;
 
 import groovy.lang.Closure;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
@@ -64,5 +65,14 @@ public class CamelContextCategory {
                 GroovyCategorySupport.use(RouteDefinitionCategory.class, buildRoute);
             }
         });
+        self.start();
+    }
+
+    /**
+     * Some route does not block - e.g. 'file:' ends immediately after starting.
+     * This is a convenience method to stop the script from exiting.
+     */
+    public static void waitForever(final CamelContext self) throws InterruptedException {
+        Thread.currentThread().join();
     }
 }

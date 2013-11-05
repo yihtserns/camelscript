@@ -38,7 +38,6 @@ class CamelContextCategoryTest {
             }
         }
 
-        start()
         def result = createProducerTemplate().requestBody('direct:input', (Object) null)
 
         assert result == expectedResult

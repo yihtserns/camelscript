@@ -7,6 +7,4 @@ routes {
     from('direct:input').transform(constant('Result'))
 }
 
-start()
-
 createProducerTemplate().requestBody('direct:input', (Object) null)
