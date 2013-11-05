@@ -16,6 +16,7 @@
 package com.github.yihtserns.camelscript;
 
 import groovy.lang.Closure;
+import java.util.Arrays;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,7 +63,9 @@ public class CamelContextCategory {
                 Closure buildRoute = (Closure) buildRoutePrototype.clone();
 
                 buildRoute.setDelegate(this);
-                GroovyCategorySupport.use(RouteDefinitionCategory.class, buildRoute);
+                GroovyCategorySupport.use(
+                        Arrays.<Class>asList(RouteDefinitionCategory.class, RouteBuilderCategory.class),
+                        buildRoute);
             }
         });
         self.start();
