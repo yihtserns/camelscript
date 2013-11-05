@@ -9,6 +9,4 @@ routes {
     from('inDirect:input').transform(constant('Result'))
 }
 
-start()
-
 createProducerTemplate().requestBody('inDirect:input', (Object) null)

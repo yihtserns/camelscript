@@ -34,7 +34,7 @@ import groovy.*
 routes {
     from('jetty:http://localhost:8090/hello/world').transform(constant('Hello World!'))
 }
-start()
+// Auto-start
 ```
 
 Route building
@@ -70,7 +70,6 @@ routes {
     from('file://inbox?filter=#myFilter') // Will look for 'myFilter' in binding
         .process { println it.in.getBody(String) }
 }
-start()
 Thread.currentThread().join() // Wait forever
 ```
 
@@ -94,7 +93,6 @@ routes {
     from('activemq:MyQueue') // Will look for 'activemq' in binding
         .process { println it.in.body }
 }
-start()
 ```
 
 #### Closure

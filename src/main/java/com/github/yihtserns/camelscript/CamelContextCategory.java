@@ -64,5 +64,6 @@ public class CamelContextCategory {
                 GroovyCategorySupport.use(RouteDefinitionCategory.class, buildRoute);
             }
         });
+        self.start();
     }
 }

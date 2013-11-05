@@ -36,6 +36,4 @@ routes {
     from('direct:input').to('myComponent:dummy?valueProvider=#myBean')
 }
 
-start()
-
 createProducerTemplate().requestBody('direct:input', (Object) null)
