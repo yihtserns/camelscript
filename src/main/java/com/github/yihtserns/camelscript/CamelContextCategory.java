@@ -16,8 +16,8 @@
 package com.github.yihtserns.camelscript;
 
 import groovy.lang.Closure;
+import java.util.Arrays;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
@@ -51,7 +51,7 @@ public class CamelContextCategory {
      * @param self to add routes to
      * @param buildRoutePrototype things you'd do in {@link RouteBuilder#configure()}
      * @throws Exception if an error occurs while building route
-     * @see CamelContext#addRoutes(RoutesBuilder)
+     * @see CamelContext#addRoutes(org.apache.camel.RoutesBuilder)
      */
     public static void routes(final CamelContext self, final Closure buildRoutePrototype) throws Exception {
         self.addRoutes(new RouteBuilder() {
@@ -62,7 +62,9 @@ public class CamelContextCategory {
                 Closure buildRoute = (Closure) buildRoutePrototype.clone();
 
                 buildRoute.setDelegate(this);
-                GroovyCategorySupport.use(RouteDefinitionCategory.class, buildRoute);
+                GroovyCategorySupport.use(
+                        Arrays.<Class>asList(RouteDefinitionCategory.class, RouteBuilderCategory.class),
+                        buildRoute);
             }
         });
         self.start();
