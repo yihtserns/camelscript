@@ -16,9 +16,10 @@
 package com.github.yihtserns.camelscript;
 
 import groovy.lang.Closure;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.RouteDefinition;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
 /**
  * Groovy Category for {@link RouteDefinition}s.
@@ -56,6 +57,23 @@ public class RouteDefinitionCategory {
      * @see Processor
      */
     public static RouteDefinition process(final RouteDefinition self, final Closure<Void> process) {
-        return self.process(DefaultGroovyMethods.asType(process, Processor.class));
+        return self.process(new ClosureProcessor(process));
+    }
+
+    private static final class ClosureProcessor implements Processor {
+
+        private Closure<Void> process;
+
+        public ClosureProcessor(final Closure<Void> process) {
+            this.process = process;
+        }
+
+        public void process(final Exchange exchange) throws Exception {
+            GroovyCategorySupport.use(MessageCategory.class, new Closure(null) {
+                public void doCall() {
+                    process.call(exchange);
+                }
+            });
+        }
     }
 }

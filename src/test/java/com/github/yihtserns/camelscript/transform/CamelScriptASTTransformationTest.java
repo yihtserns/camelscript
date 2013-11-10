@@ -20,6 +20,7 @@ import groovy.lang.GString;
 import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.junit.Test;
 import static org.hamcrest.Matchers.*;
@@ -82,6 +83,11 @@ public class CamelScriptASTTransformationTest {
     @Test
     public void shouldBeAbleToUseClosureInScriptBindingAsFactoryMethod() throws Exception {
         assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.groovy")), is((Object) "Result"));
+    }
+
+    @Test
+    public void canConvertMessageUsingAsKeyword() throws Exception {
+        assertThat(evaluateAndReturnResult(resources.getFile("ConvertMessageAs.groovy")), is(instanceOf(Date.class)));
     }
 
     /**
