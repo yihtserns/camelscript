@@ -18,6 +18,10 @@ package com.github.yihtserns.camelscript
 
 import org.junit.Test
 import org.apache.camel.CamelContext
+import org.apache.camel.Message
+import org.apache.camel.Exchange
+import org.apache.camel.TypeConverter
+import org.apache.camel.impl.DefaultMessage
 import org.apache.camel.NoTypeConversionAvailableException
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.builder.RouteBuilder
@@ -53,5 +57,50 @@ class MessageCategoryTest {
         shouldFailWithCause(NoTypeConversionAvailableException) {
             createProducerTemplate().sendBody('direct:input', '2013-04-26')
         }
+    }
+
+    @Test
+    void 'can convert message with no body'() {
+        final String dateKey = 'date'
+        final String dateFormat = 'yyyy-MM-dd'
+
+        typeConverterRegistry.addTypeConverter(Date, Message, new TypeConverter() {
+
+                def mandatoryConvertTo(Class type, Object message) {
+                    Date.parse(dateFormat, message.getHeader(dateKey))
+                }
+
+                def convertTo(Class type, Object value) {
+                    mandatoryConvertTo(type, value)
+                }
+                def convertTo(Class type, Exchange exchange, Object value) {
+                    mandatoryConvertTo(type, value)
+                }
+
+                def mandatoryConvertTo(Class type, Exchange exchange, Object value) {
+                    mandatoryConvertTo(type, value)
+                }
+            })
+
+        addRoutes(
+            new RouteBuilder() {
+                void configure() {
+                    use (RouteDefinitionCategory, MessageCategory) {
+                        from('direct:input').process {
+                            it.out.body = it.in as Date
+                        }
+                    }
+                }
+            }
+        )
+        start()
+
+        def date = new Date().clearTime()
+
+        def message = new DefaultMessage()
+        message.setHeader(dateKey, date.format(dateFormat))
+
+        Date converted = createProducerTemplate().requestBody('direct:input', message)
+        assert converted == date
     }
 }

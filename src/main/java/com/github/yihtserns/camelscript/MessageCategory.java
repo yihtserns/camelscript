@@ -15,8 +15,8 @@
  */
 package com.github.yihtserns.camelscript;
 
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 
 /**
  *
@@ -24,7 +24,11 @@ import org.apache.camel.Message;
  */
 public class MessageCategory {
 
-    public static Object asType(final Message self, final Class type) throws InvalidPayloadException {
-        return self.getMandatoryBody(type);
+    public static Object asType(final Message self, final Class type) throws NoTypeConversionAvailableException {
+        Object convertedBody = self.getBody(type);
+        if (convertedBody == null) {
+            throw new NoTypeConversionAvailableException(self, type);
+        }
+        return convertedBody;
     }
 }
