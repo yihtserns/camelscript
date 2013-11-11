@@ -21,6 +21,7 @@ import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.junit.Test;
 import static org.hamcrest.Matchers.*;
@@ -56,6 +57,11 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("ClosureAsProcessor.camel")), is((Object) "Result"));
     }
 
+    @Test
+    public void shouldBeAbleToAddClosureAsTransformer() throws Exception {
+        assertThat(evaluateAndReturnResult(resources.getFile("ClosureAsTransformer.camel")), is((Object) "Result"));
+    }
+
     /**
      * @see http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML
      */
@@ -87,7 +93,8 @@ public class CamelScriptASTTransformationTest {
 
     @Test
     public void canConvertMessageUsingAsKeyword() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("ConvertMessageAs.camel")), is(instanceOf(Date.class)));
+        List<Object> results = (List) evaluateAndReturnResult(resources.getFile("ConvertMessageAs.camel"));
+        assertThat(results, everyItem(is(instanceOf(Date.class))));
     }
 
     /**

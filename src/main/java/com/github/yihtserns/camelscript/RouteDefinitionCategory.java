@@ -17,6 +17,7 @@ package com.github.yihtserns.camelscript;
 
 import groovy.lang.Closure;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.RouteDefinition;
 import org.codehaus.groovy.runtime.GroovyCategorySupport;
@@ -60,6 +61,10 @@ public class RouteDefinitionCategory {
         return self.process(new ClosureProcessor(process));
     }
 
+    public static RouteDefinition transform(final RouteDefinition self, final Closure<Object> transform) {
+        return self.transform(new ClosureExchangeTransformer(transform));
+    }
+
     private static final class ClosureProcessor implements Processor {
 
         private Closure<Void> process;
@@ -74,6 +79,19 @@ public class RouteDefinitionCategory {
                     process.call(exchange);
                 }
             });
+        }
+    }
+
+    private static final class ClosureExchangeTransformer implements Expression {
+
+        private Closure<Object> transform;
+
+        public ClosureExchangeTransformer(Closure<Object> transform) {
+            this.transform = transform;
+        }
+
+        public Object evaluate(Exchange exchange, Class unused) {
+            return transform.call(exchange);
         }
     }
 }

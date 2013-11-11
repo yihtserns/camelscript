@@ -47,6 +47,23 @@ class RouteDefinitionCategoryTest {
     }
 
     @Test
+    void "should be able to pass closure in as transform's Expression"() {
+        addRoutes(
+            new RouteBuilder() {
+                void configure() {
+                    use (RouteDefinitionCategory) {
+                        from('direct:input').transform {'Res'}.transform {it.in.body + 'ult'}
+                    }
+                }
+            }
+        )
+        start()
+
+        def result = createProducerTemplate().requestBody('direct:input', (Object) null)
+        assert result == 'Result'
+    }
+
+    @Test
     void 'should be able to chain process calls'() {
         addRoutes(
             new RouteBuilder() {

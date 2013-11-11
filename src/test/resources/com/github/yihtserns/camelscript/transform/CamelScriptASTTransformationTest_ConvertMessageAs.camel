@@ -22,7 +22,11 @@ typeConverterRegistry.addTypeConverter(Date, String, new TypeConverter() {
     })
 
 routes {
-    from 'direct:input' process { it.out.body = it.in as Date }
+    from 'direct:process' process { it.out.body = it.in as Date }
+    from 'direct:transform' transform { it.in as Date }
 }
 
-createProducerTemplate().requestBody('direct:input', (Object) '2013-04-26')
+def routes = ['direct:process', 'direct:transform']
+def dates = routes.collect {
+    createProducerTemplate().requestBody('direct:process', (Object) '2013-04-26')
+}
