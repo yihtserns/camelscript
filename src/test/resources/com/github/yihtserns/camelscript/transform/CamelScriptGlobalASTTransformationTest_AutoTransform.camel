@@ -1,5 +1,0 @@
-routes {
-    from('direct:input').process { it.out.body = 'Result' }
-}
-
-createProducerTemplate().requestBody('direct:input', (Object) null);

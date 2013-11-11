@@ -1,4 +1,3 @@
-@CamelScript
 package com.github.yihtserns.camelscript.transform
 
 print "Print"

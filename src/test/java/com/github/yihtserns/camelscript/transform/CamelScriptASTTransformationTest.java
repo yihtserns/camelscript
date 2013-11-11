@@ -35,7 +35,7 @@ public class CamelScriptASTTransformationTest {
 
     @Test
     public void shouldBeAbleToTreatCamelScriptClassAsCamelContext() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptAsCamelContext.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptAsCamelContext.camel")), is((Object) "Result"));
     }
 
     /**
@@ -43,17 +43,17 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldMakeCamelScriptInstanceOfCamelContext() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptIsCamelContext.groovy")), is((Object) true));
+        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptIsCamelContext.camel")), is((Object) true));
     }
 
     @Test
     public void shouldBeAbleToBuildRoutesUsingSyntacticSugar() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("BuildRoutesSyntacticSugar.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("BuildRoutesSyntacticSugar.camel")), is((Object) "Result"));
     }
 
     @Test
     public void shouldBeAbleToAddClosureAsProcessor() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("ClosureAsProcessor.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("ClosureAsProcessor.camel")), is((Object) "Result"));
     }
 
     /**
@@ -61,7 +61,7 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldBeAbleToReferToComponentInScriptBinding() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("ComponentInScriptBinding.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("ComponentInScriptBinding.camel")), is((Object) "Result"));
     }
 
     /**
@@ -69,12 +69,12 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldBeAbleToReferToInstanceInScriptBinding() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("InstanceInScriptBinding.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("InstanceInScriptBinding.camel")), is((Object) "Result"));
     }
 
     @Test
     public void shouldBeAbleBuildSmootherRoutesUsingSyntacticSugar() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("SmootherRoutesSyntacticSugar.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("SmootherRoutesSyntacticSugar.camel")), is((Object) "Result"));
     }
 
     /**
@@ -82,12 +82,12 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldBeAbleToUseClosureInScriptBindingAsFactoryMethod() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.groovy")), is((Object) "Result"));
+        assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.camel")), is((Object) "Result"));
     }
 
     @Test
     public void canConvertMessageUsingAsKeyword() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("ConvertMessageAs.groovy")), is(instanceOf(Date.class)));
+        assertThat(evaluateAndReturnResult(resources.getFile("ConvertMessageAs.camel")), is(instanceOf(Date.class)));
     }
 
     /**
@@ -95,7 +95,7 @@ public class CamelScriptASTTransformationTest {
      */
     @Test
     public void shouldBeAbleToLogWithoutError() throws Exception {
-        evaluateAndReturnResult(resources.getFile("LogWithoutError.groovy"));
+        evaluateAndReturnResult(resources.getFile("LogWithoutError.camel"));
     }
 
     /**

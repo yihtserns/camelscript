@@ -38,11 +38,6 @@ public class CamelScriptGlobalASTTransformationTest {
     private LocalResources resources = LocalResources.forClass(getClass());
 
     @Test
-    public void shouldAutoTransformFileWithCamelAsExtensionIntoCamelScript() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("AutoTransform.camel")), is((Object) "Result"));
-    }
-
-    @Test
     public void shouldNotAutoTransformFileWithoutCamelAsExtension() throws Exception {
         thrown.expect(MissingMethodException.class);
         thrown.expectMessage(containsString("routes"));
