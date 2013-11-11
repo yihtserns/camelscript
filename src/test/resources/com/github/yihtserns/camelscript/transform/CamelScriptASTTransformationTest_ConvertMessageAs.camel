@@ -27,6 +27,6 @@ routes {
 }
 
 def routes = ['direct:process', 'direct:transform']
-def dates = routes.collect {
-    createProducerTemplate().requestBody('direct:process', (Object) '2013-04-26')
+def dates = routes.collect { route ->
+    createProducerTemplate().requestBody(route, '2013-04-26')
 }

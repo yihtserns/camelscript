@@ -90,8 +90,8 @@ public class RouteDefinitionCategory {
             this.transform = transform;
         }
 
-        public Object evaluate(Exchange exchange, Class unused) {
-            return transform.call(exchange);
+        public Object evaluate(final Exchange exchange, Class unused) {
+            return GroovyCategorySupport.use(MessageCategory.class, transform.curry(exchange));
         }
     }
 }
