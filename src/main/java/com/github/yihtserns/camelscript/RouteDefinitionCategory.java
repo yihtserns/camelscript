@@ -74,11 +74,7 @@ public class RouteDefinitionCategory {
         }
 
         public void process(final Exchange exchange) throws Exception {
-            GroovyCategorySupport.use(MessageCategory.class, new Closure(null) {
-                public void doCall() {
-                    process.call(exchange);
-                }
-            });
+            GroovyCategorySupport.use(MessageCategory.class, process.curry(exchange));
         }
     }
 
