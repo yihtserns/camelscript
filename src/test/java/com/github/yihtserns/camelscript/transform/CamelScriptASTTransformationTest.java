@@ -32,6 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class CamelScriptASTTransformationTest {
 
+    public static boolean useFirstRoute;
     private LocalResources resources = LocalResources.forClass(getClass());
 
     @Test
@@ -100,6 +101,15 @@ public class CamelScriptASTTransformationTest {
     @Test
     public void canLoopToBuildRoute() throws Exception {
         assertThat(evaluateAndReturnResult(resources.getFile("LoopToBuildRoute.camel")), is((Object) "Result"));
+    }
+
+    @Test
+    public void canDoConditionalCheckToBuildRoute() throws Exception {
+        useFirstRoute = true;
+        assertThat(evaluateAndReturnResult(resources.getFile("ConditionalCheckBuildRoute.camel")), is((Object) "Result1"));
+
+        useFirstRoute = false;
+        assertThat(evaluateAndReturnResult(resources.getFile("ConditionalCheckBuildRoute.camel")), is((Object) "Result2"));
     }
 
     /**
