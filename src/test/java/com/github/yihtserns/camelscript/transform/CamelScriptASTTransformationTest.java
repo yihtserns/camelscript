@@ -63,6 +63,12 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("ClosureAsTransformer.camel")), is((Object) "Result"));
     }
 
+    @Test
+    public void shouldBeAbleToAddClosureAsPredicate() throws Exception {
+        List<String> results = (List) evaluateAndReturnResult(resources.getFile("ClosureAsPredicate.camel"));
+        assertThat(results, contains(null, "Result"));
+    }
+
     /**
      * @see http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML
      */

@@ -1,0 +1,9 @@
+package com.github.yihtserns.camelscript.transform
+
+import org.apache.camel.builder.*
+
+routes {
+    from('direct:input').filter { it.in.body == 'Skip' }.transform { 'Result'}
+}
+
+[null, 'Skip'].collect { String input -> createProducerTemplate().requestBody('direct:input', input) }

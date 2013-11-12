@@ -62,6 +62,28 @@ class RouteDefinitionCategoryTest {
         def result = createProducerTemplate().requestBody('direct:input', (Object) null)
         assert result == 'Result'
     }
+    
+    @Test
+    void 'should be able to pass closure in as predicate'() {
+        addRoutes(
+            new RouteBuilder() {
+                void configure() {
+                    use (RouteDefinitionCategory) {
+                        from('direct:input').filter {it.in.body.startsWith('Res')}.transform {it.in.body + 'ult'}
+                    }
+                }
+            }
+        )
+        start()
+        
+        def template = createProducerTemplate()
+        
+        def result1 = template.requestBody('direct:input', 'Not')
+        assert result1 == 'Not'
+        
+        def result2 = template.requestBody('direct:input', 'Res')
+        assert result2 == 'Result'
+    }
 
     @Test
     void 'should be able to chain process calls'() {

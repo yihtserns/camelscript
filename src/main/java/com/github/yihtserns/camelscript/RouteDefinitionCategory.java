@@ -18,12 +18,16 @@ package com.github.yihtserns.camelscript;
 import groovy.lang.Closure;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
 /**
- * Groovy Category for {@link RouteDefinition}s.
+ * Groovy Category for {@link org.apache.camel.model.RouteDefinition}s.
+ *
+ * TODO: No longer a RouteDefinitionCategory, learn that should've been a ProcessorDefinitionCategory instead.
  *
  * @author yihtserns
  */
@@ -53,16 +57,20 @@ public class RouteDefinitionCategory {
      *
      * @param self to add {@link Processor} closure to
      * @param process {@link Processor} closure
-     * @return result of {@link RouteDefinition#process(Processor)}
+     * @return result of {@link org.apache.camel.model.RouteDefinition#process(Processor)}
      * @see org.apache.camel.builder.RouteBuilder#from(String)
      * @see Processor
      */
-    public static RouteDefinition process(final RouteDefinition self, final Closure<Void> process) {
+    public static ProcessorDefinition process(final ProcessorDefinition self, final Closure<Void> process) {
         return self.process(new ClosureProcessor(process));
     }
 
-    public static RouteDefinition transform(final RouteDefinition self, final Closure<Object> transform) {
+    public static ProcessorDefinition transform(final ProcessorDefinition self, final Closure<Object> transform) {
         return self.transform(new ClosureExchangeTransformer(transform));
+    }
+
+    public static FilterDefinition filter(final ProcessorDefinition self, final Closure<Boolean> predicate) {
+        return self.filter(new ClosurePredicate(predicate));
     }
 
     private static final class ClosureProcessor implements Processor {
@@ -88,6 +96,19 @@ public class RouteDefinitionCategory {
 
         public Object evaluate(final Exchange exchange, Class unused) {
             return GroovyCategorySupport.use(MessageCategory.class, transform.curry(exchange));
+        }
+    }
+
+    private static final class ClosurePredicate implements Predicate {
+
+        private Closure<Boolean> predicate;
+
+        public ClosurePredicate(Closure<Boolean> predicate) {
+            this.predicate = predicate;
+        }
+
+        public boolean matches(Exchange exchange) {
+            return GroovyCategorySupport.use(MessageCategory.class, predicate.curry(exchange));
         }
     }
 }
