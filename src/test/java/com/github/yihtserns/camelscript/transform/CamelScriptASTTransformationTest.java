@@ -97,6 +97,11 @@ public class CamelScriptASTTransformationTest {
         assertThat(results, everyItem(is(instanceOf(Date.class))));
     }
 
+    @Test
+    public void canLoopToBuildRoute() throws Exception {
+        assertThat(evaluateAndReturnResult(resources.getFile("LoopToBuildRoute.camel")), is((Object) "Result"));
+    }
+
     /**
      * Provides user with an OOTB SLF4J Logger.
      */

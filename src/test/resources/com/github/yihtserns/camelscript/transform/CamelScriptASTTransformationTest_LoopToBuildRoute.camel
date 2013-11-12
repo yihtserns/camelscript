@@ -1,0 +1,11 @@
+package com.github.yihtserns.camelscript.transform
+
+routes {
+    from('direct:input') {
+        ['u', 'l', 't'].each { val ->
+            transform { "${it.in.body}${val}" }
+        }
+    }
+}
+
+createProducerTemplate().requestBody('direct:input', 'Res')
