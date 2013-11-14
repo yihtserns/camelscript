@@ -68,6 +68,11 @@ public class CamelScriptASTTransformationTest {
         List<String> results = (List) evaluateAndReturnResult(resources.getFile("ClosureAsPredicate.camel"));
         assertThat(results, contains(null, "Result"));
     }
+    
+    @Test
+    public void shouldBeAbleToAddClosureAsProcessOnException() throws Exception {
+        assertThat(evaluateAndReturnResult(resources.getFile("ClosureForOnException.camel")), is((Object) "InException"));
+    }
 
     /**
      * @see http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML

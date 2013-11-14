@@ -1,0 +1,10 @@
+package com.github.yihtserns.camelscript.transform
+
+import org.apache.camel.builder.*
+
+routes {
+    onException(Exception).process { it.out.body = 'In' }.transform { it.in.body + 'Exception' }.handled(true)
+    from('direct:input').process { throw new Exception('Simulated') }
+}
+
+createProducerTemplate().requestBody('direct:input', (Object) null)
