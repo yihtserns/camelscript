@@ -40,18 +40,26 @@ routes {
 Route building
 --------------
 ### Process
-Instead of this:
 ```groovy
-from('jetty:http://localhost:8090/hello/world').process({exchange -> exchange.out.body = 'Hello World!'} as Processor)
-```
-Can do this:
-```groovy
-// Don't have to coerce closure to Processor anymore
 from('jetty:http://localhost:8090/hello/world').process {exchange -> exchange.out.body = 'Hello World!'}
 ```
-
+### Transform
+```groovy
+from('jetty:http://localhost:8090/hello/world').transform {exchange -> return 'Hello World!'}
+```
+### Filter
+```groovy
+from('jetty:http://localhost:8090/hello/world').filter {exchange -> exchange.in.body == 'Hi'}.transform {exchange -> return 'Hello World'}
+```
+### Multi-line route building
+```groovy
+from('jetty:http://localhost:8090/hello/world') {
+    filter {exchange -> exchange.in.body == 'Hi'}
+    transform {exchange -> return 'Hello World'}
+}
+```
 ### [Registry](http://camel.apache.org/registry.html)
-Registry used in Camel Script is backed by the [Groovy script's binding](http://groovy.codehaus.org/api/groovy/lang/Binding.html), so anything placed in the latter can be referenced.
+Registry in Camel Script is backed by the [Groovy script's binding](http://groovy.codehaus.org/api/groovy/lang/Binding.html), so anything placed in the latter can be referenced.
 
 #### [Referring to Objects from URI query string](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs)
 ```groovy
@@ -63,14 +71,14 @@ package test
 import org.apache.camel.component.file.GenericFileFilter
 import org.apache.camel.component.file.GenericFile
 
-// Add object to binding
 myFilter = { GenericFile file -> !file.fileName.startsWith('skip') } as GenericFileFilter
 
 routes {
-    from('file://inbox?filter=#myFilter') // Will look for 'myFilter' in binding
-        .process { println it.in.getBody(String) }
+    from('file://inbox?filter=#myFilter') { // Will look for 'myFilter' in binding
+        process { println it.in.getBody(String) }
+    }
 }
-Thread.currentThread().join() // Wait forever
+waitForever()
 ```
 
 #### [Referring to Objects from URI scheme](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML)
@@ -86,12 +94,12 @@ package test
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.camel.component.jms.JmsComponent
 
-// Add object to binding
 activemq = new JmsComponent(connectionFactory: new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444'))
 
 routes {
-    from('activemq:MyQueue') // Will look for 'activemq' in binding
-        .process { println it.in.body }
+    from('activemq:MyQueue') { // Will look for 'activemq' in binding
+        process { println it.in.body }
+    }
 }
 ```
 
