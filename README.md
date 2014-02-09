@@ -25,9 +25,6 @@ context.start()
 
 into this instead:
 ```groovy
-@CamelScript // This whole script is a CamelContext now
-package test
-
 @Grab('com.github.yihtserns:camelscript:1.0.0')
 import groovy.*
 
