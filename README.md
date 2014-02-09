@@ -2,8 +2,6 @@ Camel Script
 ============
 Provides syntactic sugar for Apache Camel to make it easy to configure in Groovy script.
 
-**Note**: Not yet available from central maven repository
-
 Overview
 --------
 This project enables you to simplify this type of Groovy script:
@@ -23,10 +21,9 @@ context.addRoutes(new RouteBuilder() {
 })
 context.start()
 ```
-
 into this instead:
 ```groovy
-// MyScript.camel <-- File extension must be .camel
+// MyScript.camel <-- Change file extension to .camel to turn this script into Camel Script
 @Grab('com.github.yihtserns:camelscript:0.0.1')
 @Grab('org.apache.camel:camel-jetty:2.4.0')
 import groovy.*
@@ -43,14 +40,17 @@ Route building
 ```groovy
 from('jetty:http://localhost:8090/hello/world').process {exchange -> exchange.out.body = 'Hello World!'}
 ```
+
 ### Transform
 ```groovy
 from('jetty:http://localhost:8090/hello/world').transform {exchange -> return 'Hello World!'}
 ```
+
 ### Filter
 ```groovy
 from('jetty:http://localhost:8090/hello/world').filter {exchange -> exchange.in.body == 'Hi'}.transform {exchange -> return 'Hello World'}
 ```
+
 ### Multi-line route building
 ```groovy
 from('jetty:http://localhost:8090/hello/world') {
@@ -58,53 +58,125 @@ from('jetty:http://localhost:8090/hello/world') {
     transform {exchange -> return 'Hello World'}
 }
 ```
-### [Registry](http://camel.apache.org/registry.html)
-Registry in Camel Script is backed by the [Groovy script's binding](http://groovy.codehaus.org/api/groovy/lang/Binding.html), so anything placed in the latter can be referenced.
 
-#### [Referring to Objects from URI query string](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs)
+### Dynamic route building
+Iterate over a range:
 ```groovy
-// Adapted from http://camel.apache.org/file2.html#File2-Filterusingorg.apache.camel.component.file.GenericFileFilter
-@CamelScript
-package test
-
-@Grab('com.github.yihtserns:camelscript:1.0.0')
-import org.apache.camel.component.file.GenericFileFilter
-import org.apache.camel.component.file.GenericFile
-
-myFilter = { GenericFile file -> !file.fileName.startsWith('skip') } as GenericFileFilter
-
-routes {
-    from('file://inbox?filter=#myFilter') { // Will look for 'myFilter' in binding
-        process { println it.in.getBody(String) }
+from('jetty:http://localhost:8090/hello/world') {
+    (1..3).each {
+        transform { exchange -> return exchange.in.body + 'Hi' }
     }
 }
-waitForever()
+// Calling http://localhost:8089/hello/world returns 'HiHiHi'
 ```
+
+Iterate over a list:
+```groovy
+from('jetty:http://localhost:8090/hello/world') {
+    ['a', 'b', 'c'].each { item ->
+        transform { exchange -> return exchange.in.body + item }
+    }
+}
+// Calling http://localhost:8089/hello/world returns 'abc'
+```
+
+Conditional:
+```groovy
+boolean rudeMode = Boolean.getBoolean('rudeMode')
+
+routes {
+    from('jetty:http://localhost:8090/hello/world') {
+        transform(constant('Hello World'))
+        if (rudeMode) {
+            transform { it.in.body.toUpperCase() }
+        }
+    }
+}
+// When -DrudeMode=true, calling http://localhost:8090/hello/world returns 'HELLO WORLD'
+```
+
+### On Exception
+```
+onException(Exception).process { println 'Exception Swallowed' }.handled(true)
+
+from('direct:input').process { throw new Exception('Simulated') }
+```
+
+### Logging
+An SLF4J logger field (`log`) is provided out-of-the-box.
+
+**Note**: `print(Object)`, `printf(String, Object)`, `printf(String, Object[])`, `println()`, and `println(Object)` method calls are delegated to `log.info`.
+
+### Convenience methods
+- `waitForever()`
+
+### [Registry](http://camel.apache.org/registry.html)
+Registry in Camel Script is backed by the [Groovy script's binding](http://groovy.codehaus.org/api/groovy/lang/Binding.html), so anything placed in the latter can be referenced.
 
 #### [Referring to Objects from URI scheme](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML)
 ```groovy
 // Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
-@CamelScript
-package test
-
-@Grab('com.github.yihtserns:camelscript:1.0.0')
+@Grab('com.github.yihtserns:camelscript:0.0.1')
 @Grab('org.apache.activemq:activemq-core:5.5.0')
 @Grab('org.apache.camel:camel-jms:2.4.0')
-@Grab('org.slf4j:slf4j-simple:1.6.0')
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.camel.component.jms.JmsComponent
 
 activemq = new JmsComponent(connectionFactory: new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444'))
 
 routes {
-    from('activemq:MyQueue') { // Will look for 'activemq' in binding
+    from('activemq:FROM') { // Will look for 'activemq' in binding
         process { println it.in.body }
     }
 }
 ```
 
+#### [Referring to Objects from URI query string](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs)
+```groovy
+@Grab('com.github.yihtserns:camelscript:0.0.1')
+@Grab('org.apache.activemq:activemq-core:5.5.0')
+@Grab('org.apache.camel:camel-jms:2.4.0')
+import org.apache.activemq.ActiveMQConnectionFactory
+
+amcf = new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444')
+
+routes {
+    // Both 'from' and 'to' will be using the same ActiveMQConnectionFactory instance
+    from('jms:FROM?connectionFactory=#amcf').to('jms:TO?connectionFactory=#amcf')
+}
+```
+
 #### Closure
-// TODO:
+If the object being referred is a `groovy.lang.Closure`, it will be invoked and the result will be used.  It'll be kinda like a factory.
+```groovy
+// Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
+@Grab('com.github.yihtserns:camelscript:0.0.1')
+@Grab('org.apache.activemq:activemq-core:5.5.0')
+@Grab('org.apache.camel:camel-jms:2.4.0')
+import org.apache.activemq.ActiveMQConnectionFactory
+import org.apache.camel.component.jms.JmsComponent
+
+amcf = { new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444') }
+
+routes {
+    // Both 'from' and 'to' will be using different ActiveMQConnectionFactory instances
+    from('jms:FROM?connectionFactory=#amcf').to('jms:TO?connectionFactory=#amcf')
+}
+```
+
+### Type Conversion
+```groovy
+@Grab('com.github.yihtserns:camelscript:0.0.1-SNAPSHOT')
+import groovy.*
+
+routes {
+    from('file:start?delete=true') {
+        // process { println it.in.getBody(String) }
+        process { println it.in as String }
+    }
+}
+waitForever()
+```
 
 Gotcha
 ------
@@ -116,4 +188,4 @@ unexpected token: routes @ line 5, column 1.
 
 1 error
 ```
-Make sure ```@Grab``` is followed by at least one ```import``` statement.
+Make sure `@Grab` is followed by at least one `import` statement.
