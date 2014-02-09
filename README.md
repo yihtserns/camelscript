@@ -8,6 +8,7 @@ Overview
 --------
 This project enables you to simplify this type of Groovy script:
 ```groovy
+// MyScript.groovy
 @Grab('org.apache.camel:camel-jetty:2.4.0')
 @Grab('org.slf4j:slf4j-simple:1.6.6')
 import org.apache.camel.Processor
@@ -25,7 +26,9 @@ context.start()
 
 into this instead:
 ```groovy
-@Grab('com.github.yihtserns:camelscript:1.0.0')
+// MyScript.camel <-- File extension must be .camel
+@Grab('com.github.yihtserns:camelscript:0.0.1')
+@Grab('org.apache.camel:camel-jetty:2.4.0')
 import groovy.*
 
 routes {
