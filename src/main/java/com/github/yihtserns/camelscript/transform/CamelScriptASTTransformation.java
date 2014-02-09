@@ -68,9 +68,9 @@ public class CamelScriptASTTransformation implements ASTTransformation {
 
     /**
      * Source code representation of what this method is doing:
+     * <pre>
      * import static com.github.yihtserns.camelscript.transform.PrintlnToLogger.*;
      *
-     * <pre>
      * {@literal @}Mixin(CamelContextCategory)
      * {@literal @}groovy.util.logging.Slf4j('log')
      * public class SCRIPT_NAME {
