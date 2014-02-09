@@ -105,3 +105,15 @@ routes {
 
 #### Closure
 // TODO:
+
+Gotcha
+------
+1. If getting this:
+```
+unexpected token: routes @ line 5, column 1.
+   routes {
+   ^
+
+1 error
+```
+Make sure ```@Grab``` is followed by at least one ```import``` statement.
