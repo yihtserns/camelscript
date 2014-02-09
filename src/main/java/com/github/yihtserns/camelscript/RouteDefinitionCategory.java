@@ -27,7 +27,7 @@ import org.codehaus.groovy.runtime.GroovyCategorySupport;
 /**
  * Groovy Category for {@link org.apache.camel.model.RouteDefinition}s.
  *
- * TODO: No longer a RouteDefinitionCategory, learn that should've been a ProcessorDefinitionCategory instead.
+ * TODO: No longer a RouteDefinitionCategory, learned that should've been a ProcessorDefinitionCategory instead.
  *
  * @author yihtserns
  */
