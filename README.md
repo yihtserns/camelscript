@@ -1,6 +1,6 @@
 Camel Script
 ============
-Provides syntactic sugar for Apache Camel to make it easy to configure in Groovy script.
+Provides syntactic sugar for Apache Camel to make it easy to set up in Groovy script.
 
 Overview
 --------
