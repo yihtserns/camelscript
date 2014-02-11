@@ -147,7 +147,7 @@ routes {
 ```
 
 #### Closure
-If the object being referred is a `groovy.lang.Closure`, it will be invoked and the result will be used.  It'll be kinda like a factory.
+If the object being referred is a `groovy.lang.Closure`, it will be invoked and the result will be used.  It'll be like a factory.
 ```groovy
 // Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
 @Grab('com.github.yihtserns:camelscript:0.0.1')
