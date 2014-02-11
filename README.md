@@ -23,7 +23,7 @@ context.start()
 ```
 into this instead:
 ```groovy
-// MyScript.camel <-- Change file extension to .camel to turn this script into Camel Script
+// MyScript.camel <-- Change file extension to .camel to turn this script into a CamelContext
 @Grab('com.github.yihtserns:camelscript:0.0.1')
 @Grab('org.apache.camel:camel-jetty:2.4.0')
 import groovy.*
