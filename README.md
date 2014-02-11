@@ -156,7 +156,7 @@ If the object being referred is a `groovy.lang.Closure`, it will be invoked and 
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.camel.component.jms.JmsComponent
 
-amcf = { new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444') }
+amcf = { return new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444') }
 
 routes {
     // Both 'from' and 'to' will be using different ActiveMQConnectionFactory instances
