@@ -13,9 +13,9 @@
 
     <name>Camel Script</name>
     <description>Provides syntactic sugar for Apache Camel to make it easy to configure in Groovy script.</description>
-    <url>https://github.com/yihtserns/camelscript</url>
+    <url>http://github.com/yihtserns/camelscript</url>
     <issueManagement>
-        <url>https://github.com/yihtserns/camelscript/issues</url>
+        <url>http://github.com/yihtserns/camelscript/issues</url>
     </issueManagement>
 
     <licenses>
