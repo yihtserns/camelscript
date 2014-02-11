@@ -110,10 +110,10 @@ public class CamelScriptASTTransformation implements ASTTransformation {
     }
 
     /**
-     * Convenience method to create {@link FieldNode}.
+     * @param fieldName name for the field
      * @param type field type
      * @param initialValueExpression initial value for the field
-     * @return
+     * @return {@link FieldNode} of the given type and initial value
      */
     private FieldNode fieldNode(
             final String fieldName, final Class<?> type, final Expression initialValueExpression) {
