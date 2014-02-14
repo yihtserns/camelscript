@@ -1,4 +1,4 @@
-Camel Script
+CamelScript
 ============
 Provides syntactic sugar for Apache Camel to make it easy to set up in Groovy script.
 
