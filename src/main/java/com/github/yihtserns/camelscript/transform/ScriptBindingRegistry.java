@@ -19,13 +19,15 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.apache.camel.spi.Registry;
 
 /**
  * Would prefer a {@code BindingRegistry} class, but after a Groovy Script is instantiated, a
- * {@link Script#setBinding(Binding) different binding will be set} - don't know enough about the lifecycle to
- * intercept just the {@link Binding}.
+ * {@link Script#setBinding(Binding) different binding will be set} - don't know enough about the lifecycle to intercept
+ * just the {@link Binding}.
  *
  * @author yihtserns
  * @see #lookup(String)
@@ -46,8 +48,8 @@ class ScriptBindingRegistry implements Registry {
     }
 
     /**
-     * @return service from {@link Binding}, (<strong>Note</strong>: {@link Closure#call() invocation result} if
-     * the service is a closure), {@code null} if not found
+     * @return service from {@link Binding}, (<strong>Note</strong>: {@link Closure#call() invocation result} if the
+     * service is a closure), {@code null} if not found
      */
     public Object lookup(final String name) {
         if (!getBinding().hasVariable(name)) {
@@ -58,6 +60,13 @@ class ScriptBindingRegistry implements Registry {
             return ((Closure) service).call();
         }
         return service;
+    }
+
+    /**
+     * @see #lookup(String)
+     */
+    public Object lookupByName(final String name) {
+        return lookup(name);
     }
 
     private Binding getBinding() {
@@ -73,10 +82,32 @@ class ScriptBindingRegistry implements Registry {
     }
 
     /**
+     * @see #lookup(String, Class)
+     */
+    public <T> T lookupByNameAndType(final String name, final Class<T> type) {
+        return lookup(name, type);
+    }
+
+    /**
      * Currently don't need this + and not sure how to properly implement.
+     *
      * @return empty Map
      */
     public <T> Map<String, T> lookupByType(final Class<T> type) {
         return Collections.emptyMap();
+    }
+
+    /**
+     * @see #lookupByType(Class)
+     */
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        return lookupByType(type);
+    }
+
+    /**
+     * @see #findByTypeWithName(Class)
+     */
+    public <T> Set<T> findByType(Class<T> type) {
+        return new HashSet<T>(findByTypeWithName(type).values());
     }
 }

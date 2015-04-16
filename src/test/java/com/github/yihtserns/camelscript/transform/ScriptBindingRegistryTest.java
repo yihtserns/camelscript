@@ -52,6 +52,7 @@ public class ScriptBindingRegistryTest {
         binding.setVariable(variableName, variable);
 
         assertThat(registry.lookup(variableName), is(variable));
+        assertThat(registry.lookupByName(variableName), is(variable));
     }
 
     @Test
@@ -60,8 +61,8 @@ public class ScriptBindingRegistryTest {
         final Object variable = "Expected Variable";
         binding.setVariable(variableName, variable);
 
-        String result = registry.lookup(variableName, String.class);
-        assertThat(result, is(variable));
+        assertThat(registry.lookup(variableName, String.class), is(variable));
+        assertThat(registry.lookupByNameAndType(variableName, String.class), is(variable));
     }
 
     @Test
@@ -87,9 +88,12 @@ public class ScriptBindingRegistryTest {
 
     /**
      * Following {@link org.apache.camel.impl.JndiRegistry}'s behaviour.
+     * TODO: CAMEL-6769 fixed JndiRegistry to implement this properly so we no longer have excuse to not do it.
      */
     @Test
-    public void lookupByTypeShouldReturnEmptyMapToSatisfyContract() throws Exception {
+    public void lookupByTypeShouldReturnEmptyCollectionToSatisfyContract() throws Exception {
         assertThat(registry.lookupByType(Tracer.class), is(Collections.<String, Tracer>emptyMap()));
+        assertThat(registry.findByTypeWithName(Tracer.class), is(Collections.<String, Tracer>emptyMap()));
+        assertThat(registry.findByType(Tracer.class), is(Collections.<Tracer>emptySet()));
     }
 }
