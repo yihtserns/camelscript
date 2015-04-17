@@ -45,7 +45,6 @@ public class CamelContextCategory {
      *     }
      * }
      * </pre>
-     * <strong>Note</strong>: {@link RouteDefinitionCategory} is auto-included to buildRoutePrototype
      * @param self to add routes to
      * @param buildRoutePrototype things you'd do in {@link RouteBuilder#configure()}
      * @throws Exception if an error occurs while building route
