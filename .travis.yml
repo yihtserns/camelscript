@@ -1,0 +1,6 @@
+language: java
+jdk: openjdk6
+env:
+  - camel.version=2.4.0
+  - camel.version=2.12.0
+  - camel.version=2.15.0
