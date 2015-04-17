@@ -126,6 +126,11 @@ public class CamelScriptASTTransformationTest {
         evaluateAndReturnResult(resources.getFile("PrintWithoutError.groovy"));
     }
 
+    @Test
+    public void getGroovyStringAsJavaString() throws Exception {
+        evaluateAndReturnResult(resources.getFile("GetGroovyStringAsJavaString.camel"));
+    }
+
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {
         Object result = new GroovyShell().evaluate(groovyFile);
         return (result instanceof GString) ? result.toString() : result;

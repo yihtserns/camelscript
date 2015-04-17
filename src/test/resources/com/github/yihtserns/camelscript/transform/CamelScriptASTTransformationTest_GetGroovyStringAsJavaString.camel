@@ -1,0 +1,11 @@
+package com.github.yihtserns.camelscript.transform
+
+import org.apache.camel.builder.*
+
+routes {
+    from('direct:input').transform { exchange, type -> exchange.in as String }
+}
+
+String input = "Result"
+def result = camelContext.createProducerTemplate().requestBody('direct:input', "$input")
+assert result.getClass() == String
