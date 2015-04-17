@@ -18,7 +18,6 @@ package com.github.yihtserns.camelscript;
 import groovy.lang.Closure;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
 /**
  * Groovy Category for {@link RouteBuilder}s.
@@ -55,6 +54,6 @@ public class RouteBuilderCategory {
         RouteDefinition routeDefinition = self.from(uri);
         defineRoute.setDelegate(routeDefinition);
 
-        GroovyCategorySupport.use(RouteDefinitionCategory.class, defineRoute);
+        defineRoute.call();
     }
 }

@@ -3,9 +3,9 @@ package com.github.yihtserns.camelscript.transform
 routes {
     from('direct:input') {
         if (CamelScriptASTTransformationTest.useFirstRoute) {
-            transform { 'Result1' }
+            transform { ex, type -> 'Result1' }
         } else {
-            transform { 'Result2' }
+            transform { ex, type -> 'Result2' }
         }
     }
 }

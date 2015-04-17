@@ -45,10 +45,8 @@ class MessageExtensionTest {
             addRoutes(
                 new RouteBuilder() {
                     void configure() {
-                        use (RouteDefinitionCategory) {
-                            from('direct:input').process {
-                                it.in as Date
-                            }
+                        from('direct:input').process {
+                            it.in as Date
                         }
                     }
                 }
@@ -77,10 +75,8 @@ class MessageExtensionTest {
             addRoutes(
                 new RouteBuilder() {
                     void configure() {
-                        use (RouteDefinitionCategory) {
-                            from('direct:input').process {
-                                it.out.body = it.in as Date
-                            }
+                        from('direct:input').process {
+                            it.out.body = it.in as Date
                         }
                     }
                 }

@@ -59,19 +59,19 @@ from('jetty:http://localhost:8090/hello/world').process {exchange -> exchange.ou
 
 ### Transform
 ```groovy
-from('jetty:http://localhost:8090/hello/world').transform {exchange -> return 'Hello World!'}
+from('jetty:http://localhost:8090/hello/world').transform {exchange, type -> return 'Hello World!'}
 ```
 
 ### Filter
 ```groovy
-from('jetty:http://localhost:8090/hello/world').filter {exchange -> exchange.in.body == 'Hi'}.transform {exchange -> return 'Hello World'}
+from('jetty:http://localhost:8090/hello/world').filter {exchange -> exchange.in.body == 'Hi'}.transform {exchange, type -> return 'Hello World'}
 ```
 
 ### Multi-line route building
 ```groovy
 from('jetty:http://localhost:8090/hello/world') {
     filter {exchange -> exchange.in.body == 'Hi'}
-    transform {exchange -> return 'Hello World'}
+    transform {exchange, type -> return 'Hello World'}
 }
 ```
 
@@ -80,7 +80,7 @@ Iterate over a range:
 ```groovy
 from('jetty:http://localhost:8090/hello/world') {
     (1..3).each {
-        transform { exchange -> return exchange.in.body + 'Hi' }
+        transform { exchange, type -> return exchange.in.body + 'Hi' }
     }
 }
 // Calling http://localhost:8089/hello/world returns 'HiHiHi'
@@ -90,7 +90,7 @@ Iterate over a list:
 ```groovy
 from('jetty:http://localhost:8090/hello/world') {
     ['a', 'b', 'c'].each { item ->
-        transform { exchange -> return exchange.in.body + item }
+        transform { exchange, type -> return exchange.in.body + item }
     }
 }
 // Calling http://localhost:8089/hello/world returns 'abc'
@@ -104,7 +104,7 @@ routes {
     from('jetty:http://localhost:8090/hello/world') {
         transform(constant('Hello World'))
         if (rudeMode) {
-            transform { it.in.body.toUpperCase() }
+            transform { exchange, type -> exchange.in.body.toUpperCase() }
         }
     }
 }

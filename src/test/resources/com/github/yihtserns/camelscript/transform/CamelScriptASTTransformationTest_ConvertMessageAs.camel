@@ -14,7 +14,7 @@ camelContext.typeConverterRegistry.addTypeConverter(Date, String, new AbstractSi
 
 routes {
     from 'direct:process' process { it.out.body = it.in as Date }
-    from 'direct:transform' transform { it.in as Date }
+    from 'direct:transform' transform { ex, type -> ex.in as Date }
 }
 
 def routes = ['direct:process', 'direct:transform']

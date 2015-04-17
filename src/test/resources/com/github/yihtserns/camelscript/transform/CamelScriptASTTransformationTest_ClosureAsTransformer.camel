@@ -3,7 +3,7 @@ package com.github.yihtserns.camelscript.transform
 import org.apache.camel.builder.*
 
 routes {
-    from('direct:input').transform { it.in.body + 'ult' }
+    from('direct:input').transform { ex, type -> ex.in.body + 'ult' }
 }
 
 camelContext.createProducerTemplate().requestBody('direct:input', 'Res')

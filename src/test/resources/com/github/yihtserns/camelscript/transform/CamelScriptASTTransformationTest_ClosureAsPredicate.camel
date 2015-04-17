@@ -3,7 +3,7 @@ package com.github.yihtserns.camelscript.transform
 import org.apache.camel.builder.*
 
 routes {
-    from('direct:input').filter { it.in.body == 'Skip' }.transform { 'Result'}
+    from('direct:input').filter { it.in.body == 'Skip' }.transform { ex, type -> 'Result' }
 }
 
 [null, 'Skip'].collect { String input -> camelContext.createProducerTemplate().requestBody('direct:input', input) }

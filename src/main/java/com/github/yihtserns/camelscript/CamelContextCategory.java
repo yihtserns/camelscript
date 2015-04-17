@@ -63,7 +63,7 @@ public class CamelContextCategory {
 
                 buildRoute.setDelegate(this);
                 GroovyCategorySupport.use(
-                        Arrays.<Class>asList(RouteDefinitionCategory.class, RouteBuilderCategory.class),
+                        Arrays.<Class>asList(RouteBuilderCategory.class),
                         buildRoute);
             }
         });
