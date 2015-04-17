@@ -24,29 +24,28 @@ import org.apache.camel.builder.RouteBuilder
 /**
  * @author yihtserns
  */
-class RouteBuilderCategoryTest {
+class RouteBuilderExtensionTest {
 
-    @Delegate(deprecated=true)
     private CamelContext camelContext = new DefaultCamelContext()
 
     @Test
     void "should be able to chain next line's process calls"() {
-        addRoutes(
-            new RouteBuilder() {
-                void configure() {
-                    use (RouteBuilderCategory) {
+        camelContext.with {
+            addRoutes(
+                new RouteBuilder() {
+                    void configure() {
                         from('direct:input') {
                             process {it.out.body = 'Res'}
                             process {it.out.body = "${it.in.body}ult"}
                         }
                     }
                 }
-            }
-        )
-        start()
+            )
+            start()
 
-        def result = createProducerTemplate().requestBody('direct:input', (Object) null)
-        assert result == 'Result'
+            def result = createProducerTemplate().requestBody('direct:input', (Object) null)
+            assert result == 'Result'
+        }
     }
 
     /**
@@ -55,21 +54,21 @@ class RouteBuilderCategoryTest {
      */
     @Test
     void "from without parenthesis"() {
-        addRoutes(
-            new RouteBuilder() {
-                void configure() {
-                    use (RouteBuilderCategory) {
+        camelContext.with {
+            addRoutes(
+                new RouteBuilder() {
+                    void configure() {
                         from 'direct:input', { // GOTCHA: Note the comma
                             process {it.out.body = 'Res'}
                             process {it.out.body = "${it.in.body}ult"}
                         }
                     }
                 }
-            }
-        )
-        start()
+            )
+            start()
 
-        def result = createProducerTemplate().requestBody('direct:input', (Object) null)
-        assert result == 'Result'
+            def result = createProducerTemplate().requestBody('direct:input', (Object) null)
+            assert result == 'Result'
+        }
     }
 }

@@ -16,10 +16,8 @@
 package com.github.yihtserns.camelscript;
 
 import groovy.lang.Closure;
-import java.util.Arrays;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
 /**
  * Groovy Category for {@link CamelContext}.
@@ -60,11 +58,9 @@ public class CamelContextCategory {
                 // Should not need to clone as it's unlikely that this closure will be invoked in multiple threads
                 // (or even multiple times), but I want to keep this as a reference/reminder
                 Closure buildRoute = (Closure) buildRoutePrototype.clone();
-
                 buildRoute.setDelegate(this);
-                GroovyCategorySupport.use(
-                        Arrays.<Class>asList(RouteBuilderCategory.class),
-                        buildRoute);
+
+                buildRoute.call();
             }
         });
         self.start();

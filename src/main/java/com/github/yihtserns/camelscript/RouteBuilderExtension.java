@@ -20,11 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 
 /**
- * Groovy Category for {@link RouteBuilder}s.
  *
  * @author yihtserns
  */
-public class RouteBuilderCategory {
+public class RouteBuilderExtension {
 
     /**
      * Chaining method calls to build route can get pretty unreadable or error prone:
