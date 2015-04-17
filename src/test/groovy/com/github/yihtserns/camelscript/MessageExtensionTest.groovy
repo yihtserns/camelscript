@@ -31,7 +31,7 @@ import groovy.util.GroovyTestCase
 /**
  * @author yihtserns
  */
-class MessageCategoryTest {
+class MessageExtensionTest {
 
     private CamelContext camelContext = new DefaultCamelContext()
     def shouldFailWithCause = new GroovyTestCase().&shouldFailWithCause
@@ -45,7 +45,7 @@ class MessageCategoryTest {
             addRoutes(
                 new RouteBuilder() {
                     void configure() {
-                        use (RouteDefinitionCategory, MessageCategory) {
+                        use (RouteDefinitionCategory) {
                             from('direct:input').process {
                                 it.in as Date
                             }
@@ -77,7 +77,7 @@ class MessageCategoryTest {
             addRoutes(
                 new RouteBuilder() {
                     void configure() {
-                        use (RouteDefinitionCategory, MessageCategory) {
+                        use (RouteDefinitionCategory) {
                             from('direct:input').process {
                                 it.out.body = it.in as Date
                             }

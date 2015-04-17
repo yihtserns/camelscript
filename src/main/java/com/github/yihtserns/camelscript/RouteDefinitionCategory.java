@@ -22,7 +22,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
 /**
  * Groovy Category for {@link org.apache.camel.model.RouteDefinition}s.
@@ -82,7 +81,7 @@ public class RouteDefinitionCategory {
         }
 
         public void process(final Exchange exchange) throws Exception {
-            GroovyCategorySupport.use(MessageCategory.class, process.curry(exchange));
+            process.call(exchange);
         }
     }
 
@@ -95,7 +94,7 @@ public class RouteDefinitionCategory {
         }
 
         public Object evaluate(final Exchange exchange, Class unused) {
-            return GroovyCategorySupport.use(MessageCategory.class, transform.curry(exchange));
+            return transform.call(exchange);
         }
     }
 
@@ -108,7 +107,7 @@ public class RouteDefinitionCategory {
         }
 
         public boolean matches(Exchange exchange) {
-            return GroovyCategorySupport.use(MessageCategory.class, predicate.curry(exchange));
+            return predicate.call(exchange);
         }
     }
 }

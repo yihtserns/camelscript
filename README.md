@@ -2,6 +2,10 @@ CamelScript
 ============
 Provides syntactic sugar for Apache Camel to make it easy to set up in Groovy script.
 
+Requirement
+-----------
+Groovy 2.2.2
+
 Overview
 --------
 This project enables you to simplify this type of Groovy script:

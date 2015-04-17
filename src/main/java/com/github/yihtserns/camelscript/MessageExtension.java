@@ -22,7 +22,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
  *
  * @author yihtserns
  */
-public class MessageCategory {
+public class MessageExtension {
 
     public static Object asType(final Message self, final Class type) throws NoTypeConversionAvailableException {
         Object convertedBody = self.getBody(type);
