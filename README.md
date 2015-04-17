@@ -13,17 +13,17 @@ import org.apache.camel.Processor
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.builder.RouteBuilder
 
-def context = new DefaultCamelContext()
-context.addRoutes(new RouteBuilder() {
+def camelContext = new DefaultCamelContext()
+camelContext.addRoutes(new RouteBuilder() {
     void configure() {
         from('jetty:http://localhost:8090/hello/world').transform(constant('Hello World!'))
     }
 })
-context.start()
+camelContext.start()
 ```
 into this instead:
 ```groovy
-// MyScript.camel <-- Change file extension to .camel to turn this script into a CamelContext
+// MyScript.camel <-- Change file extension to .camel to turn this script into a CamelScript
 @Grab('com.github.yihtserns:camelscript:0.0.1')
 @Grab('org.apache.camel:camel-jetty:2.4.0')
 import groovy.*
@@ -33,6 +33,18 @@ routes {
 }
 // Auto-start
 ```
+
+API
+---
+Property | Description
+-------- | -----------
+`camelContext` | The underlying `CamelContext` instance.
+`log` | Out-of-the-box SLF4J logger instance. **Note**: `print(Object)`, `printf(String, Object)`, `printf(String, Object[])`, `println()`, and `println(Object)` method calls are delegated to `log.info`.
+
+Method | Description
+------ | -----------
+`routes(Closure)` | Syntactic sugar for `addRoutes(RoutesBuilder)`.
+`waitForever()` | Some routes do not block (e.g. `from("file:...")`) so use this to prevent the script from ending/exiting/terminating.
 
 Route building
 --------------
@@ -102,13 +114,6 @@ onException(Exception).process { println 'Exception Swallowed' }.handled(true)
 from('direct:input').process { throw new Exception('Simulated') }
 ```
 
-### Logging
-An SLF4J logger field (`log`) is provided out-of-the-box.
-
-**Note**: `print(Object)`, `printf(String, Object)`, `printf(String, Object[])`, `println()`, and `println(Object)` method calls are delegated to `log.info`.
-
-### Convenience methods
-- `waitForever()`
 
 ### [Registry](http://camel.apache.org/registry.html)
 Registry in Camel Script is backed by the [Groovy script's binding](http://groovy.codehaus.org/api/groovy/lang/Binding.html), so anything placed in the latter can be referenced.

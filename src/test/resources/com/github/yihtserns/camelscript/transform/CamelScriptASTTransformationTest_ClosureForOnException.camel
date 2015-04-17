@@ -7,4 +7,4 @@ routes {
     from('direct:input').process { throw new Exception('Simulated') }
 }
 
-createProducerTemplate().requestBody('direct:input', (Object) null)
+camelContext.createProducerTemplate().requestBody('direct:input', (Object) null)

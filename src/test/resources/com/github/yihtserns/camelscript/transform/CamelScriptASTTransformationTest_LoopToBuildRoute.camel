@@ -8,4 +8,4 @@ routes {
     }
 }
 
-createProducerTemplate().requestBody('direct:input', 'Res')
+camelContext.createProducerTemplate().requestBody('direct:input', 'Res')

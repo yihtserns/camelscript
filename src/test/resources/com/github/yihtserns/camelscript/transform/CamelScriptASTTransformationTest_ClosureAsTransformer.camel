@@ -6,4 +6,4 @@ routes {
     from('direct:input').transform { it.in.body + 'ult' }
 }
 
-createProducerTemplate().requestBody('direct:input', 'Res')
+camelContext.createProducerTemplate().requestBody('direct:input', 'Res')

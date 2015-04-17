@@ -1,24 +1,15 @@
 package com.github.yihtserns.camelscript.transform
 
+import com.github.yihtserns.camelscript.transform.testutil.AbstractSimpleTypeConverter
 import org.apache.camel.Exchange
 import org.apache.camel.TypeConverter
 
-typeConverterRegistry.addTypeConverter(Date, String, new TypeConverter() {
+camelContext.typeConverterRegistry.addTypeConverter(Date, String, new AbstractSimpleTypeConverter() {
 
         def mandatoryConvertTo(Class type, Object value) {
             Date.parse('yyyy-MM-dd', value)
         }
 
-        def convertTo(Class type, Object value) {
-            mandatoryConvertTo(type, value)
-        }
-        def convertTo(Class type, Exchange exchange, Object value) {
-            mandatoryConvertTo(type, value)
-        }
-
-        def mandatoryConvertTo(Class type, Exchange exchange, Object value) {
-            mandatoryConvertTo(type, value)
-        }
     })
 
 routes {
@@ -28,5 +19,5 @@ routes {
 
 def routes = ['direct:process', 'direct:transform']
 def dates = routes.collect { route ->
-    createProducerTemplate().requestBody(route, '2013-04-26')
+    camelContext.createProducerTemplate().requestBody(route, '2013-04-26')
 }

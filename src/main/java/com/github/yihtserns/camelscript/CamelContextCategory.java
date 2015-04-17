@@ -69,12 +69,4 @@ public class CamelContextCategory {
         });
         self.start();
     }
-
-    /**
-     * Some route does not block - e.g. 'file:' ends immediately after starting.
-     * This is a convenience method to stop the script from exiting.
-     */
-    public static void waitForever(final CamelContext self) throws InterruptedException {
-        Thread.currentThread().join();
-    }
 }

@@ -6,4 +6,4 @@ routes {
     from('direct:input').filter { it.in.body == 'Skip' }.transform { 'Result'}
 }
 
-[null, 'Skip'].collect { String input -> createProducerTemplate().requestBody('direct:input', input) }
+[null, 'Skip'].collect { String input -> camelContext.createProducerTemplate().requestBody('direct:input', input) }

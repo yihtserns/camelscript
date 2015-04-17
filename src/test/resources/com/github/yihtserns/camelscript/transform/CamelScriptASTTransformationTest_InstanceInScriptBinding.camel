@@ -35,4 +35,4 @@ routes {
     from('direct:input').to('myComponent:dummy?valueProvider=#myBean')
 }
 
-createProducerTemplate().requestBody('direct:input', (Object) null)
+camelContext.createProducerTemplate().requestBody('direct:input', (Object) null)

@@ -36,19 +36,6 @@ public class CamelScriptASTTransformationTest {
     private LocalResources resources = LocalResources.forClass(getClass());
 
     @Test
-    public void shouldBeAbleToTreatCamelScriptClassAsCamelContext() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptAsCamelContext.camel")), is((Object) "Result"));
-    }
-
-    /**
-     * So that can use Groovy's Category.
-     */
-    @Test
-    public void shouldMakeCamelScriptInstanceOfCamelContext() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("CamelScriptIsCamelContext.camel")), is((Object) true));
-    }
-
-    @Test
     public void shouldBeAbleToBuildRoutesUsingSyntacticSugar() throws Exception {
         assertThat(evaluateAndReturnResult(resources.getFile("BuildRoutesSyntacticSugar.camel")), is((Object) "Result"));
     }

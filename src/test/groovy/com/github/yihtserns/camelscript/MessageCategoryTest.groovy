@@ -25,6 +25,7 @@ import org.apache.camel.impl.DefaultMessage
 import org.apache.camel.NoTypeConversionAvailableException
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.builder.RouteBuilder
+import com.github.yihtserns.camelscript.transform.testutil.AbstractSimpleTypeConverter
 import groovy.util.GroovyTestCase
 
 /**
@@ -32,7 +33,6 @@ import groovy.util.GroovyTestCase
  */
 class MessageCategoryTest {
 
-    @Delegate(deprecated=true, excludes=['getProperty'])
     private CamelContext camelContext = new DefaultCamelContext()
     def shouldFailWithCause = new GroovyTestCase().&shouldFailWithCause
 
@@ -41,21 +41,23 @@ class MessageCategoryTest {
      */
     @Test
     void 'should throw when unable to convert'() {
-        addRoutes(
-            new RouteBuilder() {
-                void configure() {
-                    use (RouteDefinitionCategory, MessageCategory) {
-                        from('direct:input').process {
-                            it.in as Date
+        camelContext.with {
+            addRoutes(
+                new RouteBuilder() {
+                    void configure() {
+                        use (RouteDefinitionCategory, MessageCategory) {
+                            from('direct:input').process {
+                                it.in as Date
+                            }
                         }
                     }
                 }
-            }
-        )
-        start()
+            )
+            start()
 
-        shouldFailWithCause(NoTypeConversionAvailableException) {
-            createProducerTemplate().sendBody('direct:input', '2013-04-26')
+            shouldFailWithCause(NoTypeConversionAvailableException) {
+                createProducerTemplate().sendBody('direct:input', '2013-04-26')
+            }
         }
     }
 
@@ -64,56 +66,34 @@ class MessageCategoryTest {
         final String dateKey = 'date'
         final String dateFormat = 'yyyy-MM-dd'
 
-        typeConverterRegistry.addTypeConverter(Date, Message, new TypeConverter() {
+        camelContext.with {
+            typeConverterRegistry.addTypeConverter(Date, Message, new AbstractSimpleTypeConverter() {
 
-                boolean allowNull() {
-                    false
-                }
+                    def mandatoryConvertTo(Class type, Object message) {
+                        Date.parse(dateFormat, message.getHeader(dateKey))
+                    }
+                })
 
-                def mandatoryConvertTo(Class type, Object message) {
-                    Date.parse(dateFormat, message.getHeader(dateKey))
-                }
-
-                def convertTo(Class type, Object value) {
-                    mandatoryConvertTo(type, value)
-                }
-
-                def tryConvertTo(Class type, Object value) {
-                    convertTo(type, value)
-                }
-
-                def convertTo(Class type, Exchange exchange, Object value) {
-                    mandatoryConvertTo(type, value)
-                }
-
-                def tryConvertTo(Class type, Exchange exchange, Object value) {
-                    convertTo(type, exchange, value)
-                }
-
-                def mandatoryConvertTo(Class type, Exchange exchange, Object value) {
-                    mandatoryConvertTo(type, value)
-                }
-            })
-
-        addRoutes(
-            new RouteBuilder() {
-                void configure() {
-                    use (RouteDefinitionCategory, MessageCategory) {
-                        from('direct:input').process {
-                            it.out.body = it.in as Date
+            addRoutes(
+                new RouteBuilder() {
+                    void configure() {
+                        use (RouteDefinitionCategory, MessageCategory) {
+                            from('direct:input').process {
+                                it.out.body = it.in as Date
+                            }
                         }
                     }
                 }
-            }
-        )
-        start()
+            )
+            start()
 
-        def date = new Date().clearTime()
+            def date = new Date().clearTime()
 
-        def message = new DefaultMessage()
-        message.setHeader(dateKey, date.format(dateFormat))
+            def message = new DefaultMessage()
+            message.setHeader(dateKey, date.format(dateFormat))
 
-        Date converted = createProducerTemplate().requestBody('direct:input', message)
-        assert converted == date
+            Date converted = createProducerTemplate().requestBody('direct:input', message)
+            assert converted == date
+        }
     }
 }
