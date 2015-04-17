@@ -16,7 +16,10 @@
 
 package com.github.yihtserns.camelscript
 
+import org.apache.camel.builder.RouteBuilder
+
 /**
+ * Groovy Category for Objects that contains field/property {@code camelContext} of type {@link org.apache.camel.CamelContext}.
  *
  * @author yihtserns
  */
@@ -24,11 +27,23 @@ package com.github.yihtserns.camelscript
 class CamelScriptCategory {
 
     /**
-     * Assumes the mixin target has field/property {@code camelContext}, delegates that and given closure to
-     * CamelContextCategory#routes(CamelContext, Closure).
+     * @param buildRoutePrototype things you'd do in {@link RouteBuilder#configure()}
+     * @see org.apache.camel.CamelContext#addRoutes(org.apache.camel.RoutesBuilder)
      */
-	def routes(Closure buildRoute) {
-        CamelContextCategory.routes(camelContext, buildRoute)
+	def routes(Closure buildRoutePrototype) {
+        RouteBuilder routeBuilder
+
+        routeBuilder = {
+            // Should not need to clone as it's unlikely that this closure will be invoked in multiple threads
+            // (or even multiple times), but I want to keep this as a reference/reminder
+            Closure buildRoute = (Closure) buildRoutePrototype.clone();
+            buildRoute.setDelegate(routeBuilder);
+
+            buildRoute.call();
+        }
+
+        camelContext.addRoutes(routeBuilder);
+        camelContext.start();
     }
 
     /**
