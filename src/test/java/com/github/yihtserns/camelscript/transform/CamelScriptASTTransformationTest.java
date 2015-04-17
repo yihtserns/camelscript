@@ -120,10 +120,12 @@ public class CamelScriptASTTransformationTest {
 
     /**
      * Redirect print statements to logger.
+     * <p/>
+     * NOTE: No proper assertion.
      */
     @Test
     public void shouldBeAbleToPrintWithoutError() throws Exception {
-        evaluateAndReturnResult(resources.getFile("PrintWithoutError.groovy"));
+        evaluateAndReturnResult(resources.getFile("PrintWithoutError.camel"));
     }
 
     @Test
