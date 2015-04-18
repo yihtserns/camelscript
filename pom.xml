@@ -198,4 +198,19 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!-- For Travis CI -->
+            <id>camel-version-env-override</id>
+            <activation>
+                <property>
+                    <name>env.CAMELVERSION</name>
+                </property>
+            </activation>
+            <properties>
+                <camel.version>${env.CAMELVERSION}</camel.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>
