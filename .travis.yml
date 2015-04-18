@@ -1,6 +1,12 @@
 language: java
-jdk: openjdk6
+jdk:
+  - openjdk6
+  - oraclejdk7
 env:
   - CAMELVERSION=2.4.0
   - CAMELVERSION=2.12.0
   - CAMELVERSION=2.15.0
+matrix:
+  exclude:
+    - jdk: openjdk6
+      env: CAMELVERSION=2.15.0
