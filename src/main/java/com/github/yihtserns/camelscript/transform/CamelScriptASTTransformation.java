@@ -15,6 +15,7 @@
  */
 package com.github.yihtserns.camelscript.transform;
 
+import com.github.yihtserns.camelscript.AutoGrabComponentResolver;
 import com.github.yihtserns.camelscript.CamelScriptCategory;
 import groovy.lang.Mixin;
 import groovy.util.logging.Slf4j;
@@ -75,6 +76,8 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      *      private CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
      *
      *      {
+     *          camelContext.componentResolver = new AutoGrabComponentResolver()
+     *
      *          def printToLogger = new PrintToLogger(log)
      *          metaClass.print = printToLogger.&print
      *          metaClass.printf = printToLogger.&printf
@@ -91,11 +94,16 @@ public class CamelScriptASTTransformation implements ASTTransformation {
 
         Expression newScriptRegistry = constructorOf(ScriptBindingRegistry.class, THIS_EXPRESSION);
         Expression newCamelContext = constructorOf(DefaultCamelContext.class, newScriptRegistry);
+        Expression newComponentResolver = constructorOf(AutoGrabComponentResolver.class);
         FieldNode camelContextField = fieldNode(CAMEL_CONTEXT_FIELD_NAME, CamelContext.class, newCamelContext);
         Expression registerToShutdownHook = staticMethodOf(
                 CamelContextStopper.class, "registerToShutdownHook", new FieldExpression(camelContextField));
 
         scriptClassNode.addField(camelContextField);
+        transformer.addToInitializerBlock(new BinaryExpression(
+                new PropertyExpression(new FieldExpression(camelContextField), "componentResolver"),
+                EQUAL_TOKEN,
+                newComponentResolver));
         transformer.addLogger();
         transformer.redirectPrintsToLogger();
         transformer.mixin(CamelScriptCategory.class);

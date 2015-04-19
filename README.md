@@ -29,10 +29,10 @@ into this instead:
 ```groovy
 // MyScript.camel <-- Change file extension to .camel to turn this script into a CamelScript
 @Grab('com.github.yihtserns:camelscript:0.0.1')
-@Grab('org.apache.camel:camel-jetty:2.4.0')
 import groovy.*
 
 routes {
+    // Auto @Grab('org.apache.camel:camel-jetty:<current Camel version>)'
     from('jetty:http://localhost:8090/hello/world').transform(constant('Hello World!'))
 }
 // Auto-start
@@ -49,6 +49,23 @@ Method | Description
 ------ | -----------
 `routes(Closure)` | Syntactic sugar for `addRoutes(RoutesBuilder)`.
 `waitForever()` | Some routes do not block (e.g. `from("file:...")`) so use this to prevent the script from ending/exiting/terminating.
+
+Auto-Grab
+-----------------
+### Overriding Camel version
+```groovy
+@Grab('org.apache.camel:camel-core:2.15.0') // Must be declared before camelscript
+@Grab('com.github.yihtserns:camelscript:0.0.2')
+import groovy.*
+
+routes {
+    // Grabs Camel-Jetty 2.15.0
+    from('jetty:http://...')...
+
+    // Grabs Camel-JMS 2.15.0
+    from('jms:...')
+}
+```
 
 Route building
 --------------
@@ -144,7 +161,6 @@ routes {
 ```groovy
 @Grab('com.github.yihtserns:camelscript:0.0.1')
 @Grab('org.apache.activemq:activemq-core:5.5.0')
-@Grab('org.apache.camel:camel-jms:2.4.0')
 import org.apache.activemq.ActiveMQConnectionFactory
 
 amcf = new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444')
@@ -161,9 +177,7 @@ If the object being referred is a `groovy.lang.Closure`, it will be invoked and 
 // Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
 @Grab('com.github.yihtserns:camelscript:0.0.1')
 @Grab('org.apache.activemq:activemq-core:5.5.0')
-@Grab('org.apache.camel:camel-jms:2.4.0')
 import org.apache.activemq.ActiveMQConnectionFactory
-import org.apache.camel.component.jms.JmsComponent
 
 amcf = { return new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444') }
 
