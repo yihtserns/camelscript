@@ -37,7 +37,7 @@ public class StartLaterDefaultTypeConverterTest {
 
         verify(camelContext).setTypeConverter((TypeConverter) argThat(instanceOf(StartLaterDefaultTypeConverter.class)));
         verify(camelContext).setTypeConverterRegistry((TypeConverterRegistry) argThat(instanceOf(StartLaterDefaultTypeConverter.class)));
-        verify(camelContext).addService(argThat(instanceOf(StartLaterDefaultTypeConverter.class)));
+        verify(camelContext, atLeastOnce()).addService(argThat(instanceOf(StartLaterDefaultTypeConverter.class)));
     }
 
     @Test
