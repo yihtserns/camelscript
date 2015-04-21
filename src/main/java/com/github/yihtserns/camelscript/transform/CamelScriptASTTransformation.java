@@ -17,6 +17,7 @@ package com.github.yihtserns.camelscript.transform;
 
 import com.github.yihtserns.camelscript.AutoGrabComponentResolver;
 import com.github.yihtserns.camelscript.CamelScriptCategory;
+import com.github.yihtserns.camelscript.StartLaterDefaultTypeConverter;
 import groovy.lang.Mixin;
 import groovy.util.logging.Slf4j;
 import org.apache.camel.CamelContext;
@@ -77,6 +78,7 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      *
      *      {
      *          camelContext.componentResolver = new AutoGrabComponentResolver()
+     *          StartLaterDefaultTypeConverter.registerInto(camelContext)
      *
      *          def printToLogger = new PrintToLogger(log)
      *          metaClass.print = printToLogger.&print
@@ -95,15 +97,18 @@ public class CamelScriptASTTransformation implements ASTTransformation {
         Expression newScriptRegistry = constructorOf(ScriptBindingRegistry.class, THIS_EXPRESSION);
         Expression newCamelContext = constructorOf(DefaultCamelContext.class, newScriptRegistry);
         Expression newComponentResolver = constructorOf(AutoGrabComponentResolver.class);
-        FieldNode camelContextField = fieldNode(CAMEL_CONTEXT_FIELD_NAME, CamelContext.class, newCamelContext);
+        FieldExpression camelContextField = new FieldExpression(
+                fieldNode(CAMEL_CONTEXT_FIELD_NAME, CamelContext.class, newCamelContext));
         Expression registerToShutdownHook = staticMethodOf(
-                CamelContextStopper.class, "registerToShutdownHook", new FieldExpression(camelContextField));
+                CamelContextStopper.class, "registerToShutdownHook", camelContextField);
 
-        scriptClassNode.addField(camelContextField);
+        scriptClassNode.addField(camelContextField.getField());
         transformer.addToInitializerBlock(new BinaryExpression(
-                new PropertyExpression(new FieldExpression(camelContextField), "componentResolver"),
+                new PropertyExpression(camelContextField, "componentResolver"),
                 EQUAL_TOKEN,
                 newComponentResolver));
+        transformer.addToInitializerBlock(staticMethodOf(
+                StartLaterDefaultTypeConverter.class, "registerInto", camelContextField));
         transformer.addLogger();
         transformer.redirectPrintsToLogger();
         transformer.mixin(CamelScriptCategory.class);
