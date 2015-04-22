@@ -33,6 +33,7 @@ class CamelScriptCategory {
 	def routes(Closure buildRoutePrototype) {
         RouteBuilder routeBuilder
 
+        // Using closure because facing cryptic problem with anonymous class here
         routeBuilder = {
             // Should not need to clone as it's unlikely that this closure will be invoked in multiple threads
             // (or even multiple times), but I want to keep this as a reference/reminder
