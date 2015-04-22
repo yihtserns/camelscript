@@ -71,4 +71,50 @@ class RouteBuilderExtensionTest {
             assert result == 'Result'
         }
     }
+
+    @Test
+    void 'can filter'() {
+        camelContext.with {
+            addRoutes(
+                new RouteBuilder() {
+                    void configure() {
+                        from('direct:input') {
+                            filter { it.in.body == 'Hello' }
+                            setBody(constant('Consumed'))
+                        }
+                    }
+                }
+            )
+            start()
+
+            def acceptedResult = createProducerTemplate().requestBody('direct:input', 'Hello')
+            assert acceptedResult == 'Consumed'
+
+            def rejectedResult = createProducerTemplate().requestBody('direct:input', 'HEY!')
+            assert rejectedResult  == 'HEY!'
+        }
+    }
+
+    @Test
+    void 'can chain filter'() {
+        camelContext.with {
+            addRoutes(
+                new RouteBuilder() {
+                    void configure() {
+                        from('direct:input') {
+                            filter { it.in.body.startsWith('H') } filter { it.in.body.endsWith('o') }
+                            setBody(constant('Consumed'))
+                        }
+                    }
+                }
+            )
+            start()
+
+            def acceptedResult = createProducerTemplate().requestBody('direct:input', 'Hello')
+            assert acceptedResult == 'Consumed'
+
+            def rejectedResult = createProducerTemplate().requestBody('direct:input', 'HEY!')
+            assert rejectedResult  == 'HEY!'
+        }
+    }
 }

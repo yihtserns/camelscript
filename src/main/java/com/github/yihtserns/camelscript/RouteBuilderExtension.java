@@ -51,7 +51,7 @@ public class RouteBuilderExtension {
         Closure defineRoute = (Closure) defineRoutePrototype.clone();
 
         RouteDefinition routeDefinition = self.from(uri);
-        defineRoute.setDelegate(routeDefinition);
+        defineRoute.setDelegate(new ProcessorDefinitionBuilder(routeDefinition));
 
         defineRoute.call();
     }
