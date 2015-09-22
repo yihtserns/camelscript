@@ -112,6 +112,14 @@ public class CamelScriptASTTransformationTest {
     }
 
     /**
+     * ProcessorDefinition and RouteBuilder both have 'bean' method - have to make sure won't confuse the former for the latter.
+     */
+    @Test
+    public void canBuildBeanRoute() throws Exception {
+        assertThat(evaluateAndReturnResult(resources.getFile("BuildBeanRoute.camel")), is((Object) "Result"));
+    }
+
+    /**
      * Provides user with an OOTB SLF4J Logger.
      */
     @Test

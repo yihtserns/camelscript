@@ -1,0 +1,16 @@
+package com.github.yihtserns.camelscript.transform
+
+routes {
+    from('direct:input') {
+        bean(new BuildBeanRouteResponder(), 'respond')
+    }
+}
+
+camelContext.createProducerTemplate().requestBody('direct:input', (Object) null)
+
+class BuildBeanRouteResponder {
+
+    String respond() {
+        return "Result"
+    }
+}

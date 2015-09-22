@@ -52,6 +52,7 @@ public class RouteBuilderExtension {
 
         RouteDefinition routeDefinition = self.from(uri);
         defineRoute.setDelegate(new ProcessorDefinitionBuilder(routeDefinition));
+        defineRoute.setResolveStrategy(Closure.DELEGATE_FIRST);
 
         defineRoute.call();
     }
