@@ -112,14 +112,6 @@ public class CamelScriptASTTransformationTest {
     }
 
     /**
-     * ProcessorDefinition and RouteBuilder both have 'bean' method - have to make sure won't confuse the former for the latter.
-     */
-    @Test
-    public void canBuildBeanRoute() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("BuildBeanRoute.camel")), is((Object) "Result"));
-    }
-
-    /**
      * Provides user with an OOTB SLF4J Logger.
      */
     @Test
@@ -146,6 +138,11 @@ public class CamelScriptASTTransformationTest {
     public void shouldReplaceComponentResolver() throws Exception {
         Object compResolver = evaluateAndReturnResult(resources.getFile("AutoGrabComponentResolver.camel"));
         assertThat(compResolver, is(instanceOf(AutoGrabComponentResolver.class)));
+    }
+
+    @Test
+    public void shouldBeAbleToConvertTypeWhenBuildingRoute() throws Exception {
+        evaluateAndReturnResult(resources.getFile("ConvertTypeWhenBuildingRoute.camel"));
     }
 
     private Object evaluateAndReturnResult(File groovyFile) throws CompilationFailedException, IOException {

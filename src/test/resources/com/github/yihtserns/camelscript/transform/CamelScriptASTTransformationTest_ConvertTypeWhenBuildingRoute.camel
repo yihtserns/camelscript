@@ -1,0 +1,6 @@
+package com.github.yihtserns.camelscript.transform
+
+routes {
+    // Can convert `timeout` from `String` to `long`
+    from('seda:input?timeout=10000').transform(constant('Result'))
+}
