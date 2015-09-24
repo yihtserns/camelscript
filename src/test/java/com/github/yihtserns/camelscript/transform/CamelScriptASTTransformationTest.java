@@ -15,7 +15,6 @@
  */
 package com.github.yihtserns.camelscript.transform;
 
-import com.github.yihtserns.camelscript.AutoGrabComponentResolver;
 import com.github.yihtserns.camelscript.transform.testutil.LocalResources;
 import groovy.lang.GString;
 import groovy.lang.GroovyShell;
@@ -132,12 +131,6 @@ public class CamelScriptASTTransformationTest {
     @Test
     public void getGroovyStringAsJavaString() throws Exception {
         evaluateAndReturnResult(resources.getFile("GetGroovyStringAsJavaString.camel"));
-    }
-
-    @Test
-    public void shouldReplaceComponentResolver() throws Exception {
-        Object compResolver = evaluateAndReturnResult(resources.getFile("AutoGrabComponentResolver.camel"));
-        assertThat(compResolver, is(instanceOf(AutoGrabComponentResolver.class)));
     }
 
     @Test

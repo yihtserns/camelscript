@@ -1,3 +1,0 @@
-package com.github.yihtserns.camelscript.transform
-
-return camelContext.componentResolver
