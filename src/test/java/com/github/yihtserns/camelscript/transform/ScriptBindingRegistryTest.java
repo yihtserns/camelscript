@@ -18,8 +18,13 @@ package com.github.yihtserns.camelscript.transform;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.Script;
+import java.util.Collection;
 import java.util.Collections;
-import org.apache.camel.processor.interceptor.Tracer;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.Matchers.*;
@@ -86,14 +91,48 @@ public class ScriptBindingRegistryTest {
         assertThat(registry.lookup("NonExistentVariable"), is(nullValue()));
     }
 
-    /**
-     * Following {@link org.apache.camel.impl.JndiRegistry}'s behaviour.
-     * TODO: CAMEL-6769 fixed JndiRegistry to implement this properly so we no longer have excuse to not do it.
-     */
     @Test
-    public void lookupByTypeShouldReturnEmptyCollectionToSatisfyContract() throws Exception {
-        assertThat(registry.lookupByType(Tracer.class), is(Collections.<String, Tracer>emptyMap()));
-        assertThat(registry.findByTypeWithName(Tracer.class), is(Collections.<String, Tracer>emptyMap()));
-        assertThat(registry.findByType(Tracer.class), is(Collections.<Tracer>emptySet()));
+    public void lookupByTypeShouldFindVariablesOfGivenTypeInBinding() throws Exception {
+        Map<String, Integer> integerVariables = new HashMap<String, Integer>();
+        Map<String, String> stringVariables = new HashMap<String, String>();
+        integerVariables.put("firstInteger", 3);
+        integerVariables.put("secondInteger", 5);
+        stringVariables.put("firstString", "10");
+
+        copyInto(binding,
+                integerVariables,
+                stringVariables);
+
+        assertThat(registry.lookupByType(Integer.class), is(integerVariables));
+        assertThat(registry.lookupByType(String.class), is(stringVariables));
+
+        assertThat(registry.findByTypeWithName(Integer.class), is(integerVariables));
+        assertThat(registry.findByTypeWithName(String.class), is(stringVariables));
+
+        assertThat(registry.findByType(Integer.class), is(newSet(integerVariables.values())));
+        assertThat(registry.findByType(String.class), is(newSet(stringVariables.values())));
+    }
+
+    @Test
+    public void lookupByTypeShouldIncludeVariableOfSubtype() throws Exception {
+        String variableName = "stringVariable";
+        CharSequence variable = "Expected Variable";
+        binding.setVariable(variableName, variable);
+
+        assertThat(registry.lookupByType(CharSequence.class), hasEntry(variableName, variable));
+        assertThat(registry.findByTypeWithName(CharSequence.class), hasEntry(variableName, variable));
+        assertThat(registry.findByType(CharSequence.class), is(Collections.singleton(variable)));
+    }
+
+    private static void copyInto(Binding binding, Map<String, ?>... nVariables) {
+        for (Map<String, ?> variables : nVariables) {
+            for (Entry<String, ?> entry : variables.entrySet()) {
+                binding.setVariable(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private static <T> Set<T> newSet(Collection<T> collection) {
+        return new HashSet<T>(collection);
     }
 }

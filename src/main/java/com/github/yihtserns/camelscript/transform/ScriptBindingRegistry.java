@@ -18,9 +18,10 @@ package com.github.yihtserns.camelscript.transform;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.camel.spi.Registry;
 
@@ -89,12 +90,19 @@ class ScriptBindingRegistry implements Registry {
     }
 
     /**
-     * Currently don't need this + and not sure how to properly implement.
-     *
-     * @return empty Map
+     * @return services from {@link Binding} that are compatible (same type or subtype) with the given type, empty
+     * {@code Map} if none found
      */
     public <T> Map<String, T> lookupByType(final Class<T> type) {
-        return Collections.emptyMap();
+        Map<String, T> varName2Var = new HashMap<String, T>();
+        for (Entry<String, ?> entry : (Set<Entry>) script.getBinding().getVariables().entrySet()) {
+            Object value = entry.getValue();
+            if (type.isInstance(value)) {
+                varName2Var.put(entry.getKey(), type.cast(value));
+            }
+        }
+
+        return varName2Var;
     }
 
     /**
