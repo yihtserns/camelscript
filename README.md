@@ -155,23 +155,6 @@ routes {
 }
 ```
 
-#### Closure
-If the object being referred is a `groovy.lang.Closure`, it will be invoked and the result will be used.  It'll be like a factory.
-```groovy
-// Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
-@Grab('com.github.yihtserns:camelscript:0.0.1')
-@Grab('org.apache.activemq:activemq-core:5.5.0')
-@Grab('org.apache.camel:camel-jms:2.4.0')
-import org.apache.activemq.ActiveMQConnectionFactory
-
-amcf = { return new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444') }
-
-routes {
-    // Both 'from' and 'to' will be using different ActiveMQConnectionFactory instances
-    from('jms:FROM?connectionFactory=#amcf').to('jms:TO?connectionFactory=#amcf')
-}
-```
-
 ### Type Conversion
 ```groovy
 @Grab('com.github.yihtserns:camelscript:0.0.1')

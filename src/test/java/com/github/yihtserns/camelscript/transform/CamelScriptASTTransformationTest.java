@@ -82,14 +82,6 @@ public class CamelScriptASTTransformationTest {
         assertThat(evaluateAndReturnResult(resources.getFile("SmootherRoutesSyntacticSugar.camel")), is((Object) "Result"));
     }
 
-    /**
-     * Like referring to a prototype Spring bean.
-     */
-    @Test
-    public void shouldBeAbleToUseClosureInScriptBindingAsFactoryMethod() throws Exception {
-        assertThat(evaluateAndReturnResult(resources.getFile("ClosureInScriptBinding.camel")), is((Object) "Result"));
-    }
-
     @Test
     public void canConvertMessageUsingAsKeyword() throws Exception {
         List<Object> results = (List) evaluateAndReturnResult(resources.getFile("ConvertMessageAs.camel"));

@@ -16,7 +16,6 @@
 package com.github.yihtserns.camelscript.transform;
 
 import groovy.lang.Binding;
-import groovy.lang.Closure;
 import groovy.lang.Script;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,22 +67,6 @@ public class ScriptBindingRegistryTest {
 
         assertThat(registry.lookup(variableName, String.class), is(variable));
         assertThat(registry.lookupByNameAndType(variableName, String.class), is(variable));
-    }
-
-    @Test
-    public void lookupClosureShouldUseTheReturnValue() throws Exception {
-        final String variableName = "myVariable";
-        final Object closure = new Closure<String>(null) {
-            public String doCall() {
-                return new String("Expected Variable");
-            }
-        };
-        binding.setVariable(variableName, closure);
-
-        String firstResult = registry.lookup(variableName, String.class);
-        String secondResult = registry.lookup(variableName, String.class);
-        assertThat(firstResult, is(equalTo(secondResult)));
-        assertThat(firstResult, is(not(sameInstance(secondResult))));
     }
 
     @Test

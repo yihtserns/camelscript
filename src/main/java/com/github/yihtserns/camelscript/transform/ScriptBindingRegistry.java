@@ -16,7 +16,6 @@
 package com.github.yihtserns.camelscript.transform;
 
 import groovy.lang.Binding;
-import groovy.lang.Closure;
 import groovy.lang.Script;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,18 +48,12 @@ class ScriptBindingRegistry implements Registry {
     }
 
     /**
-     * @return service from {@link Binding}, (<strong>Note</strong>: {@link Closure#call() invocation result} if the
-     * service is a closure), {@code null} if not found
+     * @return service from {@link Binding}, {@code null} if not found
      */
     public Object lookup(final String name) {
-        if (!getBinding().hasVariable(name)) {
-            return null;
-        }
-        Object service = getBinding().getVariable(name);
-        if (service instanceof Closure) {
-            return ((Closure) service).call();
-        }
-        return service;
+        Binding binding = getBinding();
+
+        return binding.hasVariable(name) ? binding.getVariable(name) : null;
     }
 
     /**
