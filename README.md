@@ -169,6 +169,12 @@ routes {
 waitForever()
 ```
 
+Logging
+-------
+CamelScript ships with a default [`logback.xml`](http://logback.qos.ch).  `log.level` flag can be used to change the [log level](http://logback.qos.ch/manual/architecture.html#basic_selection) e.g. `groovy -Dlog.level=DEBUG MyScript.camel`
+
+If you want to further change the logging, [use your own custom `logback.xml`](http://logback.qos.ch/manual/configuration.html#configFileProperty).
+
 Gotcha
 ------
 1. If getting this:
