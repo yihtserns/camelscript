@@ -174,7 +174,7 @@ routes {
 
 ### Type Conversion
 ```groovy
-@Grab('com.github.yihtserns:camelscript:0.0.1-SNAPSHOT')
+@Grab('com.github.yihtserns:camelscript:0.0.1')
 import groovy.*
 
 routes {
