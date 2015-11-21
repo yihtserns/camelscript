@@ -175,6 +175,18 @@ CamelScript ships with a default [`logback.xml`](http://logback.qos.ch).  `log.l
 
 If you want to further change the logging, [use your own custom `logback.xml`](http://logback.qos.ch/manual/configuration.html#configFileProperty).
 
+Change Camel version
+--------------------
+```groovy
+@Grab('org.apache.camel:camel-core:2.15.0')  // Must be declared before camelscript
+@Grab('com.github.yihtserns:camelscript:0.0.1')
+import groovy.*
+
+routes {
+    ...
+}
+```
+
 Gotcha
 ------
 1. If getting this:
