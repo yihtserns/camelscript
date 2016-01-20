@@ -15,9 +15,7 @@
  */
 package com.github.yihtserns.camelscript.transform;
 
-import com.github.yihtserns.camelscript.AutoGrabComponentResolver;
 import com.github.yihtserns.camelscript.CamelScriptCategory;
-import com.github.yihtserns.camelscript.StartLaterDefaultTypeConverter;
 import groovy.lang.Mixin;
 import groovy.util.logging.Slf4j;
 import org.apache.camel.CamelContext;
@@ -59,7 +57,6 @@ import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION;
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 public class CamelScriptASTTransformation implements ASTTransformation {
 
-    private static final boolean ENABLE_AUTO_GRAB = Boolean.getBoolean("camelscript.autograb");
     private static final String CAMEL_CONTEXT_FIELD_NAME = "camelContext";
     private static final String LOG_FIELD_NAME = "log";
     private static final Token EQUAL_TOKEN = Token.newSymbol(Types.EQUAL, -1, -1);
@@ -78,15 +75,13 @@ public class CamelScriptASTTransformation implements ASTTransformation {
      *      private CamelContext camelContext = new DefaultCamelContext(new ScriptBindingRegistry(this));
      *
      *      {
-     *          if (Boolean.getBoolean("camelscript.autograb")) {
-     *            camelContext.componentResolver = new AutoGrabComponentResolver()
-     *            StartLaterDefaultTypeConverter.registerInto(camelContext)
-     *          }
-     *
      *          def printToLogger = new PrintToLogger(log)
      *          metaClass.print = printToLogger.&print
      *          metaClass.printf = printToLogger.&printf
      *          metaClass.println = printToLogger.&println
+     *
+     *          def camelDependencyGrabber = new CamelDependencyGrabber(camelContext)
+     *          metaClass.require = camelDependencyGrabber.&grab
      *
      *          CamelContextStopper.registerToShutdownHook(camelContext);
      *      }
@@ -105,16 +100,9 @@ public class CamelScriptASTTransformation implements ASTTransformation {
                 CamelContextStopper.class, "registerToShutdownHook", camelContextField);
 
         scriptClassNode.addField(camelContextField.getField());
-        if (ENABLE_AUTO_GRAB) {
-            transformer.addToInitializerBlock(new BinaryExpression(
-                    new PropertyExpression(camelContextField, "componentResolver"),
-                    EQUAL_TOKEN,
-                    constructorOf(AutoGrabComponentResolver.class)));
-            transformer.addToInitializerBlock(staticMethodOf(
-                    StartLaterDefaultTypeConverter.class, "registerInto", camelContextField));
-        }
         transformer.addLogger();
         transformer.redirectPrintsToLogger();
+        transformer.addCamelDependencyGrabber();
         transformer.mixin(CamelScriptCategory.class);
         transformer.addToInitializerBlock(registerToShutdownHook);
     }
@@ -170,6 +158,16 @@ public class CamelScriptASTTransformation implements ASTTransformation {
             copyMethodsToMetaClass(printToLoggerVar, "print");
             copyMethodsToMetaClass(printToLoggerVar, "printf");
             copyMethodsToMetaClass(printToLoggerVar, "println");
+        }
+
+        public void addCamelDependencyGrabber() {
+            VariableExpression camelDependencyGrabberVar = new VariableExpression("camelDependencyGrabber");
+            addToInitializerBlock(new DeclarationExpression(
+                    camelDependencyGrabberVar,
+                    EQUAL_TOKEN,
+                    constructorOf(CamelDependencyGrabber.class, new VariableExpression(CAMEL_CONTEXT_FIELD_NAME))));
+
+            copyMethodsToMetaClass(camelDependencyGrabberVar, "require");
         }
 
         private void copyMethodsToMetaClass(final Expression from, final String methodName) {

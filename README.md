@@ -12,6 +12,7 @@ This project enables you to simplify this type of Groovy script:
 ```groovy
 // MyScript.groovy
 @Grab('org.apache.camel:camel-jetty:2.4.0')
+@Grab('org.apache.camel:camel-core:2.4.0')
 @Grab('org.slf4j:slf4j-simple:1.6.6')
 import org.apache.camel.Processor
 import org.apache.camel.impl.DefaultCamelContext
@@ -28,9 +29,10 @@ camelContext.start()
 into this instead:
 ```groovy
 // MyScript.camel <-- Change file extension to .camel to turn this script into a CamelScript
-@Grab('com.github.yihtserns:camelscript:0.0.1')
-@Grab('org.apache.camel:camel-jetty:2.4.0')
+@Grab('com.github.yihtserns:camelscript:0.0.3')
 import groovy.*
+
+require 'jetty'
 
 routes {
     from('jetty:http://localhost:8090/hello/world').transform(constant('Hello World!'))
@@ -47,6 +49,7 @@ Property | Description
 
 Method | Description
 ------ | -----------
+`require(String...)` | Syntactic sugar for `Grape.grab(Map)`.  E.g. `require('jetty', 'jms')` is actually shortcut for `['jetty', 'jms'].each { module -> Grape.grab([group:'org.apache.camel', module:'camel-' + module , version:$CAMEL_VERSION]) }`.
 `routes(Closure)` | Syntactic sugar for `addRoutes(RoutesBuilder)`.
 `waitForever()` | Some routes do not block (e.g. `from("file:...")`) so use this to prevent the script from ending/exiting/terminating.
 
@@ -125,11 +128,12 @@ Registry in Camel Script is backed by the [Groovy script's binding](http://groov
 #### [Referring to Objects from URI scheme](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-WorkingwithSpringXML)
 ```groovy
 // Adapted from http://camel.apache.org/jms.html#JMS-UsingJNDItofindtheConnectionFactory
-@Grab('com.github.yihtserns:camelscript:0.0.1')
+@Grab('com.github.yihtserns:camelscript:0.0.3')
 @Grab('org.apache.activemq:activemq-core:5.5.0')
-@Grab('org.apache.camel:camel-jms:2.4.0')
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.camel.component.jms.JmsComponent
+
+require 'jms'
 
 activemq = new JmsComponent(connectionFactory: new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444'))
 
@@ -142,10 +146,11 @@ routes {
 
 #### [Referring to Objects from URI query string](http://camel.apache.org/configuring-camel.html#ConfiguringCamel-ReferringbeansfromEndpointURIs)
 ```groovy
-@Grab('com.github.yihtserns:camelscript:0.0.1')
+@Grab('com.github.yihtserns:camelscript:0.0.3')
 @Grab('org.apache.activemq:activemq-core:5.5.0')
-@Grab('org.apache.camel:camel-jms:2.4.0')
 import org.apache.activemq.ActiveMQConnectionFactory
+
+require 'jms'
 
 amcf = new ActiveMQConnectionFactory(brokerURL: 'tcp://localhost:1444')
 
