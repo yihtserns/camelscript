@@ -2,6 +2,7 @@ language: java
 jdk:
   - openjdk6
   - oraclejdk7
+  - oraclejdk8
 env:
   - CAMELVERSION=2.4.0
   - CAMELVERSION=2.12.0
